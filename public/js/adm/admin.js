@@ -103,7 +103,7 @@ $(document).ready(function () {
         image_title: true,
         // enable automatic uploads of images represented by blob or data URIs
         automatic_uploads: true,
-        images_reuse_filename: false,
+        images_reuse_filename: true,
         // URL of our upload handler (for more details check: https://www.tinymce.com/docs/configure/file-image-upload/#images_upload_url)
         images_upload_url: '/upload.php',
         images_upload_base_path: '/storyImg/posts',

@@ -9,6 +9,8 @@ define('CHARTSET', 'utf8');
 define('APPROOT', dirname(dirname(__FILE__)));
 // URL Root
 define('URLROOT', 'http://driftingdane');
+// URL Root SSL FontAwesome
+define('URLROOTAWESOME', '//driftingdane');
 // Site Name
 define('SITENAME', 'Drifting Dane');
 // App Version

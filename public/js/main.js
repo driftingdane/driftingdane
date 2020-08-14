@@ -107,15 +107,18 @@
             toggleClass: 'active'
         }
     });
-
     $(window).scroll(function() {
         if ($(document).scrollTop() > 100) {
             $('.header').addClass('shrink');
+            $('.header__logo img').attr('src', '/all_img/img/logo_white.png');
+            /*$('.navbar-toggle span').css('background-color:', 'white');*/
         } else {
             $('.header').removeClass('shrink');
+            $('.header__logo img').attr('src', '/all_img/img/logo.png');
+            /*$('.navbar-toggle span').css('background-color:', ' #1f1c2f;');*/
+
         }
     });
-
     /**
      * Event click navbar-toggle
      */

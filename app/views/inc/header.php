@@ -22,18 +22,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo $data['title'].' | '.SITENAME; ?></title>
     <!-- Apple devices -->
-    <link rel="apple-touch-icon-precomposed" href="<?php echo URLROOT . '/img/' .  $data['siteImg']; ?>" type="image/png">
+    <link rel="apple-touch-icon-precomposed" href="<?php echo URLROOT . '/all_img/img/' .  $data['siteImg']; ?>" type="image/png">
     <!-- 152x152 -->
-    <link rel="icon" href="<?php echo URLROOT . '/img/' .  $data['siteImg']; ?>" type="image/png">
+    <link rel="icon" href="<?php echo URLROOT . '/all_img/img/' .  $data['siteImg']; ?>" type="image/png">
     <!-- 32x32 or 64x64 -->
     <!-- For IE -->
-    <!--[if IE]><link rel="shortcut icon" href="<?php echo URLROOT; ?>/img/favicon/favicon.ico"><![endif]-->
+    <!--[if IE]><link rel="shortcut icon" href="<?php echo URLROOT; ?>/all_img/img/favicon/favicon.ico"><![endif]-->
     <!-- 16x16 -->
     <!-- For Mobile Windows -->
     <meta name="msapplication-TileColor" content="#D83434">
-    <meta name="msapplication-TileImage" content="<?php echo URLROOT . '/img/' . $data['siteImg']; ?>" type="image/png">
+    <meta name="msapplication-TileImage" content="<?php echo URLROOT . '/all_img/img/' . $data['siteImg']; ?>" type="image/png">
     <!-- 32x32 or 64x64 -->
-    <link rel="icon" href="<?php echo URLROOT . '/img/' . $data['siteImg']; ?>" type="image/png">
+    <link rel="icon" href="<?php echo URLROOT . '/all_img/img/' . $data['siteImg']; ?>" type="image/png">
     <meta name="author" content="<?php echo $data['creator']; ?>">
     <meta name="description" content="<?php echo strip_tags($data['siteDesc']); ?>">
     <meta name="keywords" content="<?php echo $data['siteKeywords']; ?>">
@@ -46,7 +46,7 @@
     <meta property="og:title" content="<?php echo $data['title']; ?>">
     <meta property="og:site_name" content="<?php echo SITENAME; ?>">
     <meta property="og:url" content="<?php echo URLROOT . '/' . $_GET['url']; ?>">
-    <meta property="og:image" content="<?php echo URLROOT . '/img/' . $data['ogImg']; ?>" type="image/png">
+    <meta property="og:image" content="<?php echo URLROOT . '/all_img/img/' . $data['ogImg']; ?>" type="image/png">
     <meta property="og:description" content="<?php echo strip_tags($data['siteDesc']); ?>">
     <!--TWITTER-->
     <meta property="twitter:card" content="summary">
@@ -54,8 +54,8 @@
     <meta property="twitter:description" content="<?php echo strip_tags($data['siteDesc']); ?>">
     <meta property="twitter:creator" content="<?php echo $data['creator']; ?>">
     <meta property="twitter:url" content="<?php echo URLROOT . '/' . $_GET['url']; ?>">
-    <meta property="twitter:image" content="<?php echo URLROOT . '/img/' . $data['ogImg']; ?>" type="image/png">
-    <meta property="twitter:image:alt" content="<?php echo URLROOT . '/img/' . $data['ogImg']; ?>" type="image/png">
+    <meta property="twitter:image" content="<?php echo URLROOT . '/all_img/img/' . $data['ogImg']; ?>" type="image/png">
+    <meta property="twitter:image:alt" content="<?php echo URLROOT . '/all_img/img/' . $data['ogImg']; ?>" type="image/png">
 
     <!--GOOGLE+-->
     <link rel="author" href="<?php echo $data['creator']; ?>">
@@ -71,7 +71,7 @@
     <link href="<?php echo URLROOT; ?>/css/footer.css" rel="stylesheet" type="text/css">
     <link href="<?php echo URLROOT; ?>/css/lightgallery.min.css" rel="stylesheet" type="text/css">
     <!-- custom imports -->
-    <link href="<?php echo URLROOT; ?>/node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo URLROOTAWESOME; ?>/node_modules/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <!--- CSS files are imported into scss -->
     <link href="<?php echo URLROOT; ?>/scss/scss.min.css" rel="stylesheet" type="text/css" >
     <link rel="stylesheet" type="text/css" href="<?php echo URLROOT ; ?>/js/layerslider/css/layerslider.css">

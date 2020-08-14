@@ -82,10 +82,9 @@
             <div class="col-lg-4 col-md-6 col-sm-6">
                 <div class="single-footer-widget">
                     <h6 class="mb-20">YouTube Channel</h6>
-                    <ul class="instafeed d-flex flex-wrap">
-
-                        <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=rM8Y_NyW1aIbfKWcs4JcCw" width="480" height="400"></iframe>
-                    </ul>
+                    <div class="instafeed d-flex flex-wrap">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLz1ReTgzcSUT1yDqM_f_5mBGzOHkp4Ms-" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
 
@@ -148,6 +147,38 @@
     });
 
 
+
+    <!-- show embeded videos on click inside popup modal -->
+    $(document).ready(function() {
+        autoPlayYouTubeModal();
+    });
+
+    function autoPlayYouTubeModal() {
+        var trigger = $('.trigger');
+        trigger.click(function(e) {
+            e.preventDefault();
+            var theModal = $(this).data("target");
+            var videoSRC = $(this).attr("src");
+            var videoSRCauto = videoSRC + "?autoplay=1";
+            $(theModal + ' iframe').attr('src', videoSRCauto);
+            $(theModal).on('hidden.bs.modal', function(e) {
+                $(theModal + ' iframe').attr('src', '');
+            });
+        });
+    }
+
 </script>
+<div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <button type="button" class="close btn-round btn-primary" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

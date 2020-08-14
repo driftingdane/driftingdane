@@ -115,12 +115,14 @@ $dark-text-color: #012b3a;
 
 .header.shrink {
   background: $dark-background-color;
-  color: contrasting-color($dark-background-color, $light-text-color, $dark-text-color);
+  color: contrasting-color($dark-background-color, $light-text-color, $dark-text-color) !important;
 }
+
 .header
  {
   background: $light-background-color;
   color: contrasting-color($light-background-color, $light-text-color, $dark-text-color);
 }
+
 
 /*# sourceMappingURL=scss.css.map */

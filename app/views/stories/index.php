@@ -42,13 +42,6 @@
                                 </div><!-- End /  -->
                             <?php endforeach; ?>
 
-                            <!-- pagination -->
-                            <ul class="pagination"><a class="pagination__item" href="#">1</a><a class="pagination__item"
-                                                                                                href="#">2</a><a
-                                        class="pagination__item" href="#">3</a><span
-                                        class="pagination__item active">4</span>
-                            </ul><!-- End / pagination -->
-
                         </div>
 
 

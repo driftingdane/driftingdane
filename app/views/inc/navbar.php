@@ -2,7 +2,9 @@
     <!-- header -->
     <header class="header header__style-02">
         <div class="container">
-            <div class="header__logo"><a href="<?php echo URLROOT; ?>"><img title="Home" src="<?php echo URLROOT; ?>/all_img/img/logo.png" alt="Drifting Dane logo"></a></div>
+            <div class="header__logo">
+                <a href="<?php echo URLROOT; ?>"><img title="Home" src="<?php echo URLROOT; ?>/all_img/img/logo.png" alt="Drifting Dane logo"></a>
+            </div>
             <!-- consult-nav -->
             <nav class="consult-nav">
                 <!-- consult-menu -->

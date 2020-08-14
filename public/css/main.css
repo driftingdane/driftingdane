@@ -1073,6 +1073,17 @@ fieldset[disabled] .btn-link:hover, fieldset[disabled] .btn-link:focus {
         margin-top: -1em;
     }
 }
+
+@media (max-width: 600px) {
+    .userAvatar-img {
+        width:100px;
+    }
+}
+@media (min-width: 600px) {
+    .userAvatar-img {
+        width:150px;
+    }
+}
 /*
 @media (min-width: 768px) {
     .consult-postDetail__main, .consult-projectDetail__main {
@@ -1480,5 +1491,26 @@ lg-sub-html > h4 {
     text-align: left;
 }
 #lg-download { display: none;}
+
+
+.frame {
+    width: 100%;
+    height: 100%;
+}
+
+.youtube_layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 315px;
+    cursor: pointer;
+}
+.ytp-pause-overlay.ytp-scroll-min .ytp-expand-pause-overlay .ytp-pause-overlay{
+    display: none!important;
+}
+.modal-content .close {background-color: #f39c12;}
+
+
 
 
