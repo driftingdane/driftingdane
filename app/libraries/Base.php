@@ -59,10 +59,11 @@ class Base
             $data = [
 
                 'siteName' => $this->site->site_name,
-                'siteDesc' => $this->site->site_desc,
                 'creator' => $this->site->site_contact_name,
                 'siteImg' => $this->site->site_logo,
-                'siteKeywords' => $this->site->site_keywords
+                'siteKeywords' => $this->site->site_keywords,
+
+
             ];
         }
          $this->view('inc/header', $data, true);
@@ -102,21 +103,21 @@ class Base
 
 
     public function standardIndex($data){
-        $this->standardHeader();
+        $this->standardHeader($data);
         $this->standardNav();
         $this->view('p/index', $data);
         $this->standardFooter();
     }
 
     public function standardContact($data){
-        $this->standardHeader();
+        $this->standardHeader($data);
         $this->standardNav();
         $this->view('p/contact', $data);
         $this->standardFooter();
     }
 
     public function standardAbout($data){
-        $this->standardHeader();
+        $this->standardHeader($data);
         $this->standardNav();
         $this->view('p/about', $data);
         $this->standardFooter();

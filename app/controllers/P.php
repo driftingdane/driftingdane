@@ -18,8 +18,7 @@ class P extends Base
             'siteDesc' => $this->site->site_desc,
             'siteWelcome' => $this->site->site_welcome,
             'siteImg' => $this->site->site_logo,
-            'creator' => $this->site->site_contact_name,
-            'ogImg' => 'share-home.png',
+            'ogImg' => '/all_img/img/share-home.jpg',
             'slider' => $this->slider
         ];
 
@@ -36,7 +35,7 @@ class P extends Base
             'siteName' => $this->site->site_name,
             'siteDesc' => $this->site->site_desc,
             'siteImg' => $this->site->site_logo,
-            'ogImg' => 'logo-fluencyonlife.com-share.png',
+            'ogImg' => '/all_img/img/logo.png',
             'content' => $content->ns_msg,
         ];
 
@@ -52,7 +51,7 @@ class P extends Base
             'siteName' => $this->site->site_name,
             'siteDesc' => $this->site->site_about,
             'siteImg' => $this->site->site_logo,
-            'ogImg' => 'share-about.png',
+            'ogImg' => '/all_img/img/share-about.jpg',
             'siteAbout' => $this->site->site_about,
             'creator' => $this->site->site_contact_name
         ];
@@ -68,7 +67,7 @@ class P extends Base
 
             'title' => 'Contact',
             'siteImg' => $this->site->site_logo,
-            'ogImg' => 'share-contact.png',
+            'ogImg' => '/all_img/img/share-contact.jpg',
             'siteName' => $this->site->site_name,
             'siteDesc' => $this->site->site_desc,
             'creator' => $this->site->site_contact_name,
@@ -94,7 +93,7 @@ class P extends Base
 
                 'title' => 'Contact',
                 'siteImg' => $this->site->site_logo,
-                'ogImg' => 'share-contact.png',
+                'ogImg' => 'share-contact.jpg',
                 'siteName' => $this->site->site_name,
                 'siteDesc' => $this->site->site_desc,
                 'creator' => $this->site->site_contact_name,

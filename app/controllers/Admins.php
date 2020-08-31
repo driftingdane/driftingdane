@@ -3,12 +3,15 @@ use Gumlet\ImageResize;
 
 class Admins extends Base
 {
+
     public function __construct()
     {
         parent::__construct();
 
+
         if (!isLoggedIn()) {
             redirect('users/login');
+
         }
 
         if (isLoggedIn() and !adminAut()) {
@@ -196,6 +199,7 @@ class Admins extends Base
 
     public function index()
     {
+
         $countEmails = $this->adminModel->countEmails();
         $countPosts = $this->postModel->countPosts();
 
@@ -555,6 +559,7 @@ class Admins extends Base
                     'cat_err' => '',
                     'psTitle_err' => '',
                     'psPost_err' => '',
+                    'img_err' => '',
                 ];
 
 
@@ -608,10 +613,12 @@ class Admins extends Base
                     if (file_exists($path)) {
                         chmod($path, 755);
                     }
+
                     if (move_uploaded_file($_FILES['post_img']['tmp_name'], strtolower($path))) {
                         // File uploaded
                     } else {
-                        echo 'Failed to upload your image';
+                       echo 'Failed to upload your image';
+                        echo strtolower($path);
                         exit();
                     }
                     // Resize the image
@@ -1397,8 +1404,8 @@ class Admins extends Base
                         $data['slImg_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
                     }
                     // Set the upload directory
-                    $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg';
-                    $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/mobile';
+                    $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/';
+                    $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/mobile/';
 
                     // If no folder create one with permissions
                     if (!file_exists($directory)) {
@@ -1416,6 +1423,7 @@ class Admins extends Base
                     if (file_exists($path)) {
                         chmod($path, 755);
                     }
+
                     if (move_uploaded_file($_FILES['slImg']['tmp_name'], strtolower($path))) {
                         // File uploaded
                     } else {

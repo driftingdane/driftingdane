@@ -17,12 +17,18 @@ class Videos extends Base
 
         $data =
             [
+                'title' => 'Video categories',
                 'categories' => $categories,
-                'flex' => $this->flex,
-
+                'siteName' => $this->site->site_name,
+                'siteDesc' => 'A small collection of travel videos from around the world',
+                'siteWelcome' => $this->site->site_welcome,
+                'siteImg' => $this->site->site_logo,
+                'creator' => $this->site->site_contact_name,
+                'ogImg' =>  '/all_img/img/share-videos.jpg',
             ];
 
-        $this->standardHeader();
+
+        $this->standardHeader($data);
         $this->standardNav();
         $this->view('videos/index', $data);
         $this->standardFooter();
@@ -32,13 +38,21 @@ class Videos extends Base
     public function show($id) {
 
         $videos = $this->videoModel->getVideosByCategory($id);
-
+        $lastPart = basename($_GET['url']);
+        $cat_title = cleanerUrlTitle(ucwords($lastPart));
         $data =
             [
-                'videos' => $videos
+                'videos' => $videos,
+                'title' => "Videos" . " | " . $cat_title,
+                'title_page' => $cat_title,
+                'siteName' => $this->site->site_name,
+                'siteDesc' => "Video highlights from " . $cat_title,
+                'siteImg' => $this->site->site_logo,
+                'creator' => $this->site->site_contact_name,
+                'ogImg' => '/catImg/share-img/' . strtolower($cat_title). ".jpg",
             ];
 
-        $this->standardHeader();
+        $this->standardHeader($data);
         $this->standardNav();
         $this->view('videos/show', $data);
         $this->standardFooter();

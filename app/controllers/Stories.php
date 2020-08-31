@@ -16,18 +16,16 @@ class Stories extends Base
 
         $data =
             [
-                'title' => 'List of stories',
+                'title' => 'Latest stories',
                 'posts' => $posts,
                 'categories' => $categories,
                 'galleries' => $galleries,
                 'siteName' => $this->site->site_name,
-                'siteDesc' => $this->site->site_desc,
+                'siteDesc' => 'A storytelling and collection about my life as a traveler from my point of view',
                 'siteWelcome' => $this->site->site_welcome,
                 'siteImg' => $this->site->site_logo,
                 'creator' => $this->site->site_contact_name,
-                'slider' => $this->slider,
-                'flex' => $this->flex,
-                'ogImg' => 'index-stories.png',
+                'ogImg' => '/all_img/img/share-stories.jpg',
             ];
 
         $this->standardHeader($data);
@@ -48,17 +46,13 @@ class Stories extends Base
         }
         $data =
             [
+                'post' => $post,
                 'title' => $post->ps_title . ' | ' . $post->ps_sub_title . ' | Stories',
                 'siteName' => $this->site->site_name,
-                'siteDesc' => $post->site->site_desc,
-                'siteWelcome' => $this->site->site_welcome,
                 'siteImg' => $this->site->site_logo,
                 'creator' => $this->site->site_contact_name,
-                'ogImg' =>  $post->ps_img,
-                'post' => $post,
-                'slider' => $this->slider,
-                'flex' => $this->flex,
-                'social' => $this->socials
+                'ogImg' =>  '/storyImg/' . $post->ps_img,
+
             ];
 
 

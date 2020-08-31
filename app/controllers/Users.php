@@ -10,6 +10,10 @@ class Users extends Base
 
     public function register()
     {
+        if (isLoggedIn() and !adminAut()) {
+            flash_error('access_msg', 'You need Admin rights to access');
+            redirect('users/login');
+        }
         $nation = $this->userModel->getCitizenship();
         // Init data
         $data = [
@@ -144,11 +148,11 @@ class Users extends Base
         // Process form
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // CHECK FOR CSRF ATTACK
-            if(validateToken() === false) {
+           // if(validateToken() === false) {
                 //// SHOW ERRORS
-                flash_error('token_error', 'Token mismatch!');
-                redirect('users/login');
-            }
+               // flash_error('token_error', 'Token mismatch!');
+               // redirect('users/login');
+           // }
 
             // Init data
             $data = [
@@ -214,6 +218,8 @@ class Users extends Base
                     $userName = $loggedInUser->us_first;
                     // Create user session
                     $this->createUserSession($loggedInUser);
+
+
                     switch ($has_access) {
                         case "is_admin":
                             flash('report_msg', 'Login successful! You are logged in as ' . ucfirst($userName));
