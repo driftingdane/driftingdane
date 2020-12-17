@@ -28,8 +28,15 @@ class Page
 
     public function getLinks() {
         $this->db->query('SELECT * FROM pd_links');
-        $row = $this->db->resultSet();
-        return $row;
+        $result = $this->db->resultSet();
+        return $result;
+    }
+
+
+    public function getToDoList() {
+        $this->db->query('SELECT * FROM pd_todo');
+        $result = $this->db->resultSet();
+        return $result;
     }
 
     public function getMenu() {

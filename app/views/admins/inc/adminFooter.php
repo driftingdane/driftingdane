@@ -47,9 +47,50 @@
 <script src="https://cdn.tiny.cloud/1/moy3taxyiui51g7l4w3ank9v3csjglscil6oeyfofjd5kaqr/tinymce/5.1.5-67/tinymce.min.js"></script>
 <!--<script src="<?php echo URLROOT; ?>/js/adm/tinymce5/js/tinymce/tinymce.min.js" type="text/javascript"></script>-->
 <script src="<?php echo URLROOT; ?>/js/adm/admin.js" type="text/javascript"></script>
+<script src="<?php echo URLROOT; ?>/js/adm/clipboard.min.js" type="text/javascript"></script>
+<script src="<?php echo URLROOT; ?>/js/adm/lazysizes.min.js" async="" type="text/javascript"></script>
 
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/cr-1.5.2/datatables.min.js"></script>
 <script>
+    // Clipboard
+   // new ClipboardJS('.photoLink');7
+
+    // Tooltip
+
+    $('.photoLink').tooltip({
+        trigger: 'click',
+        placement: 'bottom'
+    });
+
+    function setTooltip(btn,message) {
+        btn.tooltip('hide')
+            .attr('data-original-title', message)
+            .tooltip('show');
+    }
+
+    function hideTooltip(btn) {
+        setTimeout(function() {
+            btn.tooltip('hide');
+        }, 1000);
+    }
+
+    // Clipboard
+
+    let clipboard = new ClipboardJS('.photoLink');
+
+    clipboard.on('success', function(e) {
+        let btn = $(e.trigger);
+        setTooltip(btn,'Copied!');
+        hideTooltip(btn);
+    });
+
+    clipboard.on('error', function(e) {
+        let btn = $(e.trigger);
+        setTooltip('Failed!');
+        hideTooltip(btn);
+    });
+
+
     $('.reports').DataTable({
         responsive: true
     } );
@@ -60,7 +101,6 @@
         $('#hiddenInput').val(t);
         return objDropDown;
    }
-
 
 </script>
 </body>

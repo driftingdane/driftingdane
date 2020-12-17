@@ -1,6 +1,9 @@
 <aside class="layout-blog__sidebar">
         <!-- widget-text__widget -->
         <section class="widget-text__widget widget-text__style-02 widget">
+            <?php
+            require APPROOT . '/views/stories/inc/emailSignup.php';
+            ?>
             <h3 class="widget-title text-black-50"><span class="color-orange-text">Cate</span>gories</h3>
             <div class="widget-text__content">
                 <ul>

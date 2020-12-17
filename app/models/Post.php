@@ -49,6 +49,20 @@ class Post {
         }
     }
 
+    public function saveStoryCategory($data)
+    {
+        $this->db->query('INSERT INTO pd_blog_cat (ps_cat_name, ps_cat_desc) VALUES (:glTitle, :glDesc)');
+
+        $this->db->bind(':glTitle', $data['glTitle']);
+        $this->db->bind(':glDesc', $data['glDesc']);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     ///// GET FUNCTIONS ///////////////////////////////////////////////////////////////////////////
 
     public function getPosts(){
@@ -108,6 +122,15 @@ class Post {
 
     }
 
+    public function getStoryByCatId($id)
+    {
+        $this->db->query('SELECT * FROM pd_blog_cat WHERE ps_cat_id = :id');
+        $this->db->bind(':id', $id);
+        $row = $this->db->single();
+        return $row;
+    }
+
+
 
     /////////  UPDATE FUNCTIONS //////////////////////////////////////////////////////////
 
@@ -144,7 +167,20 @@ class Post {
         }
     }
 
+    public function updateStoryCatData($data){
 
+        $this->db->query('UPDATE pd_blog_cat SET ps_cat_name = :glTitle, ps_cat_desc = :glDesc WHERE ps_cat_id = :glCatId');
+        // Bind values
+        $this->db->bind(':glCatId', $data['glCatId']);
+        $this->db->bind(':glTitle', $data['glTitle']);
+        $this->db->bind(':glDesc', $data['glDesc']);
+
+        if($this->db->execute()){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public function UserHasPosts($userId) {
 
@@ -155,6 +191,19 @@ class Post {
         // Check row returned
         if($this->db->rowCount() > 0) {
             return $row;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function delStoryCategory($id) {
+
+        $this->db->query('DELETE FROM pd_blog_cat WHERE ps_cat_id IN (' . $id . ')');
+        $this->db->bind(':id', $id);
+        // Execute
+        if($this->db->execute()) {
+            return true;
         } else {
             return false;
         }

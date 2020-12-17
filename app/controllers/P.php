@@ -14,6 +14,7 @@ class P extends Base
         $data = [
 
             'title' => 'Home',
+            'todo' => $this->todo,
             'siteName' => $this->site->site_name,
             'siteDesc' => $this->site->site_desc,
             'siteWelcome' => $this->site->site_welcome,
@@ -157,6 +158,21 @@ class P extends Base
 
 
 
+    public function toDoList()
+    {
+        $todo = $this->pageModel->getToDoList();
+
+        $data =
+            [
+                $todo = $todo
+            ];
+
+        /// SHOW DEFAULT VIEW
+        $this->view('admins/addTodo', $data);
+    }
+
+
+
     public function subscribe() {
 
         $data =
@@ -193,10 +209,8 @@ class P extends Base
 
                 if($this->adminModel->saveEmail($data)) {
                     flash('success', 'Success! Thanks for subscribing');
-
                     $this->subscribe_greeting($data);
-
-                    redirect('p/subscribe');
+                    redirect('stories');
                     exit();
 
                 } else {
@@ -207,34 +221,26 @@ class P extends Base
 
                 // Show errors
                 $this->standardHeader($data);
-                $this->view('p/subscribe', $data);
+                $this->view('stories', $data);
 
             }
         }
         // Show default view
         $this->standardHeader($data);
-        $this->view('inc/emailSignup');
+        $this->view('stories');
     }
 
 
 
     public function subscribe_greeting($data)
     {
-
         $title = "Thanks for subscribing.";
-        $content = "We will happily send you some great news about English real life immersions,
-                            as soon as something is up. Please help us make sure you receive by adding hello@FluencyOnLife.com to your
-                            safe sender list. Thanks.";
-
+        $content = "I im excited about you wanting to read my personal stories.";
         // Create the Transport
-        $transport = (new Swift_SmtpTransport('websmtp.simply.com', 587))
-            ->setUsername('hello@wtrekker.com')
-            ->setPassword('Fluency76');
-        //$transport = (new Swift_SmtpTransport('localhost', 25));
+        $transport = (new Swift_SmtpTransport('localhost', 25));
         // Create the Mailer using your created Transport
         $mailer = new Swift_Mailer($transport);
         // Create a message
-
         $message = (new Swift_Message($title))->setFrom(array($data['ownerEmail']))->setTo(array($data['email']))->setBody('
                     <html>
                      <body><table width="600">
@@ -247,7 +253,7 @@ class P extends Base
         // Add alternative parts with addPart()
         $message->addPart($title, $content, 'text/plain');
         $headers = $message->getHeaders();
-        $headers->addTextHeader('List-Unsubscribe', "https://fluencyonlife.com/unsubscribe");
+        $headers->addTextHeader('List-Unsubscribe', URLROOT. "/unsubscribe");
         $mailer->send($message);
 
 

@@ -24,6 +24,20 @@ class Admin
         }
     }
 
+    public function saveTodo($data) {
+        $this->db->query('INSERT INTO pd_todo (do_title, do_desc) VALUES (:DoTitle, :DoDesc)');
+
+        $this->db->bind(':DoTitle', $data['DoTitle']);
+        $this->db->bind(':DoDesc', $data['DoDesc']);
+
+        if($this->db->execute()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 
     public function saveEmail($data) {
         $this->db->query('INSERT INTO email_list (email, em_hash) VALUES (:email, :hash)');

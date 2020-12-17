@@ -21,19 +21,50 @@ class Stories extends Base
                 'categories' => $categories,
                 'galleries' => $galleries,
                 'siteName' => $this->site->site_name,
-                'siteDesc' => 'A storytelling and collection about my life as a traveler from my point of view',
+                'siteDesc' => 'A storytelling collection about my life as a traveler from my point of view',
                 'siteWelcome' => $this->site->site_welcome,
                 'siteImg' => $this->site->site_logo,
                 'creator' => $this->site->site_contact_name,
                 'ogImg' => '/all_img/img/share-stories.jpg',
             ];
 
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            // Send a token for validating user later by email
+            $hash = bin2hex(random_bytes(32));
+
+        $data =
+            [
+                'hash' => $hash,
+                'subEmail_err' => ''
+            ];
+
+            if(empty($data['email'])) {
+                $data['subEmail_err'] = "Please add a valid email";
+            }
+
+            if(empty($data['subEmail_err'])) {
+
+                if($this->adminModel->saveEmail($data)) {
+                    flash('success', 'Success! Thanks for subscribing');
+                    $this->subscribe_greeting($data);
+                    redirect('stories/index');
+                    exit();
+
+                } else {
+                    echo "Something went wrong.";
+                }
+
+            } else {
+                // Show errors
+                $this->standardHeader($data);
+                $this->view('stories/index', $data);
+            }
+        }
         $this->standardHeader($data);
         $this->standardNav();
         $this->view('stories/index', $data);
         $this->standardFooter();
     }
-
 
     //////////// SHOW BY ID (RESUME)
     public function show($id = '')

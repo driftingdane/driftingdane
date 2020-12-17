@@ -6,7 +6,12 @@
                      alt="<?php echo $data['post']->ps_img; ?>">
             </div>
         </section>
-
+        <?php
+      if( strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false || strpos( $_SERVER['HTTP_USER_AGENT'], ' Chrome/' ) !== false ) {
+          echo "webp is supported!";
+          $postEntry = str_replace(".jpg", ".webp", $data['post']->ps_entry);
+        }
+        ?>
         <section>
             <!-- Start post-content Area -->
             <div class="offset-lg-9 col-lg-3">
@@ -64,11 +69,17 @@
 
                                     <div class="row">
                                         <div id="fitvids" class="col-xl-11 offset-0 offset-sm-0 offset-md-0 offset-lg-0 offset-xl-1 fitvids">
-                                            <p class="text"><?php echo $data['post']->ps_entry; ?></p>
+                                            <p class="text"><?php //echo $data['post']->ps_entry; ?></p>
+                                            <p class="text"><?php echo $postEntry; ?></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <?php $next = $data['post']->ps_id+1;
+                            $prev = $data['post']->ps_id-1;
+
+                            ?>
+                            <a title="Prev" class="" href="<?php echo URLROOT . '/admins/editPost/' . $data['post']->ps_slug; ?>">Edit</a>
                         </div>
 
                     </div>

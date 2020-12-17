@@ -1,6 +1,4 @@
 <?php
-use Hashids\Hashids;
-
 class Image
 {
     private $db;
@@ -28,6 +26,21 @@ class Image
         }
     }
 
+    public function saveCategory($data)
+    {
+        $this->db->query('INSERT INTO pd_galleries (gl_cat_title, gl_cat_desc) VALUES (:glTitle, :glDesc)');
+
+        $this->db->bind(':glTitle', $data['glTitle']);
+        $this->db->bind(':glDesc', $data['glDesc']);
+        //$this->db->bind(':glImg', $new_name);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     ///// GET FUNCTIONS ///////////////////////////////////////////////////////////////////////////
 
@@ -35,6 +48,15 @@ class Image
     public function getImageById($id)
     {
         $this->db->query('SELECT * FROM pd_images LEFT JOIN pd_galleries ON gl_cat_id = fk_cat_id WHERE gl_id = :id');
+        $this->db->bind(':id', $id);
+        $row = $this->db->single();
+        return $row;
+    }
+
+
+    public function getCatById($id)
+    {
+        $this->db->query('SELECT * FROM pd_galleries WHERE gl_cat_id = :id');
         $this->db->bind(':id', $id);
         $row = $this->db->single();
         return $row;
@@ -84,16 +106,28 @@ class Image
 
     /////////  UPDATE FUNCTIONS //////////////////////////////////////////////////////////
 
-    public function updateImage($data, $new_name){
+    public function updateImage($new_name){
 
-        $this->db->query('UPDATE pd_images SET gl_title = :glTitle, gl_desc = :glDesc. gl_img = :glImg, fk_cat_id = :glCat WHERE gl_id = :glId');
+        $this->db->query('UPDATE pd_images SET gl_img = :glImg WHERE gl_id = :glId');
+        // Bind values
+        $this->db->bind(':glImg', $new_name);
+        if($this->db->execute()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+    public function updateImageData($data){
+
+        $this->db->query('UPDATE pd_images SET gl_title = :glTitle, gl_desc = :glDesc, fk_cat_id = :glCat WHERE gl_id = :glId');
         // Bind values
         $this->db->bind(':glId', $data['glId']);
         $this->db->bind(':glTitle', $data['glTitle']);
         $this->db->bind(':glDesc', $data['glDesc']);
         $this->db->bind(':glCat', $data['glCat']);
-        $this->db->bind(':glImg', $new_name);
-
 
         if($this->db->execute()){
             return true;
@@ -101,6 +135,23 @@ class Image
             return false;
         }
     }
+
+
+    public function updateCatData($data){
+
+        $this->db->query('UPDATE pd_galleries SET gl_cat_title = :glTitle, gl_cat_desc = :glDesc WHERE gl_cat_id = :glCatId');
+        // Bind values
+        $this->db->bind(':glCatId', $data['glCatId']);
+        $this->db->bind(':glTitle', $data['glTitle']);
+        $this->db->bind(':glDesc', $data['glDesc']);
+
+        if($this->db->execute()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     ///////// COUNT FUNCTIONS /////////////////////////////////////////////////////////
 

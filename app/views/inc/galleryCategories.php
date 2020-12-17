@@ -13,7 +13,9 @@
                             <small>(<?php echo $cat->img_count; ?>)</small></span></h3>
                 <div class="category-list">
                     <small class="text-black-50">
-                        <?php echo $cat->gl_cat_desc; ?>
+                        <?php
+                        $cat_string = str_replace(' | ', '<span class="sep_color"> | </span>', $cat->gl_cat_desc);
+                        echo $cat_string; ?>
                     </small>
                 </div>
                 </a>

@@ -873,6 +873,281 @@ class Admins extends Base
         }
     }
 
+public function uploadGalleryImg($id)
+{
+    $imageById = $this->imageModel->getImageById($id);
+
+    $data =
+        [
+            'glId' => $id,
+            'glImg_err' => '',
+            'glTitle' => $imageById->glTitle,
+
+        ];
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        // Bring our return url
+        $returnUrl = $_POST['returnUrl'];
+        // CHECK FOR CSRF ATTACK
+        if (validateToken() === false) {
+            //// SHOW ERRORS
+            flash_error('token_error', 'Token mismatch!');
+            redirect('admins/ediImage/' . $returnUrl);
+        }
+        $data =
+            [
+                'glFolder' => trim($_POST['glFolder']),
+                'glImg' => $_FILES['glImg']['name'],
+                'glTitle' => $imageById->glTitle,
+                'glImg_err' => '',
+
+            ];
+
+        if (empty($data['glTitle'])) {
+            $data['glTitle_err'] = 'Please add title';
+        }
+        if (empty($data['glImg'])) {
+            $data['glImg_err'] = 'Please add images';
+        }
+        if (empty($data['glCat'])) {
+            $data['glCat_err'] = 'Please select category';
+        }
+
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+        $cat_folder = prettyUrl($data['glTitle']);
+
+        if (empty($data['glTitle_err']) and empty($data['glImg_err']) and empty($data['glCat_err'])) {
+            // Check the file upload
+            //pass the file name to our mime type helper and check the type
+            if ($_FILES['glImg']['error'] == 0) {
+                $type = (get_mime($_FILES['img']['tmp_name']));
+                if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
+                    // File is excepted
+                } else {
+                    $data['glImg_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
+                }
+                $size = $_FILES['glImg']['size'];
+                if ($size > 31457280) {
+                    $data['glImg_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
+                }
+                // Set the upload directory
+                $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/' . $cat_folder;
+                $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
+                $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
+                // If no folder create one with permissions
+                if (!file_exists($directory)) {
+                    mkdir($directory, 755, true);
+                }
+                // Rename filename
+                $new_name = round(microtime(true)) . "_" . strtolower($_FILES['glImg']['name']);
+                // Check if file exist and add write permissions
+                $path = $directory . '/' . basename($new_name);
+                $path1 = $directory1 . '/' . basename($new_name);
+                $path2 = $directory2 . '/' . basename($new_name);
+
+                if (file_exists($path)) {
+                    chmod($path, 755);
+                }
+                if (move_uploaded_file($_FILES['glImg']['tmp_name'], strtolower($path))) {
+                    // File uploaded
+                } else {
+                    echo 'Failed to upload your image';
+                    exit();
+                }
+                // Resize the image
+                $image = new ImageResize($path);
+                $image->gamma(false);
+                $image->quality_jpg = 80;
+                $image->interlace = 0;
+                $image
+                    ->resizeToWidth(1024)
+                    ->save($path)
+                    ->resizeToWidth(600)
+                    ->save($path1)
+                    ->resizeToWidth(200)
+                    ->save($path2);
+
+                /// Grab uploaded image and create a webp version
+                $im = imagecreatefromjpeg($path);
+                $web_p = pathinfo($path);
+                $im1 = imagecreatefromjpeg($path1);
+                $web_p1 = pathinfo($path1);
+                $im2 = imagecreatefromjpeg($path2);
+                $web_p2 = pathinfo($path2);
+                // Convert it to a webp file with 75% quality
+                imagewebp($im, $directory.'/'.$web_p['filename'].'.webp', 75);
+                imagewebp($im1, $directory1.'/'.$web_p1['filename'].'.webp', 75);
+                imagewebp($im2, $directory2.'/'.$web_p2['filename'].'.webp', 75);
+                imagedestroy($im);
+                imagedestroy($im1);
+                imagedestroy($im2);
+
+            } else {
+                // If no new file set the current DATABASE VALUE AS DEFAULT
+                $new_name = $data['sameFile'];
+            }
+
+
+            if ($this->imageModel->updateImage($data, $new_name)) {
+
+                flash('resume_message', 'Image updated');
+                redirect('admins/editImage');
+                exit();
+
+            } else {
+
+                echo "Unable to save data";
+            }
+        } else {
+
+        // SHOW Default view
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editImage', $data);
+        $this->adminFooter();
+    }
+  }
+
+    // SHOW Default view
+    $this->adminHeader();
+    $this->adminNav();
+    $this->view('admins/editImage', $data);
+    $this->adminFooter();
+
+
+}
+
+    public function editStoryCategory($id)
+    {
+
+        $categories = $this->postModel->getCategories();
+        $catById = $this->postModel->getStoryByCatId($id);
+
+        $data =
+            [
+                'categories' => $categories,
+                'catById' => $catById,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'glCatId' =>  $id,
+                    'catById' => $catById,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glTitle_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err'])) {
+
+                if ($this->postModel->updateStoryCatData($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/editStoryCategory/' . $id);
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/editStoryCategory', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editStoryCategory', $data);
+        $this->adminFooter();
+
+    }
+
+
+
+    public function editCategory($id)
+    {
+
+        $categories = $this->imageModel->getGalleryCategories();
+        $catById = $this->imageModel->getCatById($id);
+
+        $data =
+            [
+                'categories' => $categories,
+                'catById' => $catById,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'glCatId' =>  $id,
+                    'catById' => $catById,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glTitle_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err'])) {
+
+                if ($this->imageModel->updateCatData($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/editCategory/' . $id);
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/editCategory', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editCategory', $data);
+        $this->adminFooter();
+
+    }
+
 
     public function editImage($id)
     {
@@ -887,7 +1162,9 @@ class Admins extends Base
                 'images' => $images,
                 'imageById' =>  $imageById,
                 'categories' => $categories,
-                'countImages' => $countImages
+                'countImages' => $countImages,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
             ];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -900,11 +1177,8 @@ class Admins extends Base
                     'glId' =>  $id,
                     'glTitle' => trim($_POST['glTitle']),
                     'glDesc' => trim($_POST['glDesc']),
-                    'glFolder' => trim($_POST['glFolder']),
-                    'glImg' => $_FILES['glImg']['name'],
                     'glCat' => trim($_POST['glCat']),
                     'glTitle_err' => '',
-                    'glImg_err' => '',
                     'glCat_err' => ''
 
                 ];
@@ -912,83 +1186,18 @@ class Admins extends Base
             if (empty($data['glTitle'])) {
                 $data['glTitle_err'] = 'Please add title';
             }
-            if (empty($data['glImg'])) {
-                $data['glImg_err'] = 'Please add images';
-            }
             if (empty($data['glCat'])) {
                 $data['glCat_err'] = 'Please select category';
             }
 
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-            $cat_folder = prettyUrl($data['glTitle']);
+            if (empty($data['glTitle_err']) and empty($data['glCat_err'])) {
 
-            if (empty($data['glTitle_err']) and empty($data['glImg_err']) and empty($data['glCat_err'])) {
+                if ($this->imageModel->updateImageData($data)) {
 
-                // $this->flexibleImgUpload($new_name);
-                // Check the file upload
-                //pass the file name to our mime type helper and check the type
-                if ($_FILES['glImg']['error'] == 0) {
-                    $type = (get_mime($_FILES['img']['tmp_name']));
-                    if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
-                        // File is excepted
-                    } else {
-                        $data['glImg_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
-                    }
-                    $size = $_FILES['glImg']['size'];
-                    if ($size > 31457280) {
-                        $data['glImg_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
-                    }
-                    // Set the upload directory
-                    $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/' . $cat_folder;
-                    $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
-                    $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
-                    // If no folder create one with permissions
-                    if (!file_exists($directory)) {
-                        mkdir($directory, 755, true);
-                    }
-                    // Rename filename
-                    $new_name = round(microtime(true)) . "_" . strtolower($_FILES['glImg']['name']);
-                    // Check if file exist and add write permissions
-                    $path = $directory . '/' . basename($new_name);
-                    $path1 = $directory1 . '/' . basename($new_name);
-                    $path2 = $directory2 . '/' . basename($new_name);
-
-                    if (file_exists($path)) {
-                        chmod($path, 755);
-                    }
-                    if (move_uploaded_file($_FILES['glImg']['tmp_name'], strtolower($path))) {
-                        // File uploaded
-                    } else {
-                        echo 'Failed to upload your image';
-                        exit();
-                    }
-                    // Resize the image
-                    $image = new ImageResize($path);
-                    $image->gamma(false);
-                    $image->quality_jpg = 90;
-                    $image->interlace = 0;
-                    $image
-                        ->resizeToWidth(1024)
-                        ->save($path)
-
-                        ->resizeToWidth(600)
-                        ->save($path1)
-
-                        ->resizeToWidth(200)
-                        ->save($path2)
-                    ;
-
-                } else {
-                    // If no new file set the current DATABASE VALUE AS DEFAULT
-                    $new_name = $data['sameFile'];
-                }
-
-
-                if ($this->imageModel->updateImage($data, $new_name)) {
-
-                    flash('resume_message', 'Image updated');
-                    redirect('admins/editImage');
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/editImage/' . $id);
                     exit();
 
                 } else {
@@ -1012,7 +1221,9 @@ class Admins extends Base
         $this->view('admins/editImage', $data);
         $this->adminFooter();
 
-    }
+   }
+
+
 
     public function editSlide($id)
     {
@@ -1143,7 +1354,127 @@ class Admins extends Base
     }
 
 
+    public function addStoryCategory()
+    {
 
+        $categories = $this->postModel->getCategories();
+
+        $data =
+            [
+                'categories' => $categories,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glTitle_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err'])) {
+
+                if ($this->postModel->saveStoryCategory($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/addStoryCategory');
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/addStoryCategory', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/addStoryCategory', $data);
+        $this->adminFooter();
+
+    }
+
+
+
+    public function addCategory()
+    {
+
+        $categories = $this->imageModel->getGalleryCategories();
+
+        $data =
+            [
+                'categories' => $categories,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glTitle_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err'])) {
+
+                if ($this->imageModel->saveCategory($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/addCategory');
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/addCategory', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/addCategory', $data);
+        $this->adminFooter();
+
+    }
 
 
     public function addImage()
@@ -1194,9 +1525,9 @@ class Admins extends Base
             $cat_folder = prettyUrl($data['glFolder']);
 
             if (empty($data['glTitle_err']) and empty($data['glImg_err']) and empty($data['glCat_err'])) {
-
+                // Loop through file items
+                //foreach ($_FILES['glImg']['name'] as $idImg => $val) {
                 foreach ($_FILES['glImg'] as $file) {
-
                     // Check the file upload
                     //pass the file name to our mime type helper and check the type
                     if ($_FILES['glImg']['error'] == 0) {
@@ -1229,16 +1560,16 @@ class Admins extends Base
                         if (file_exists($path)) {
                             chmod($path, 755);
                         }
-                        if (move_uploaded_file($_FILES['glImg']['tmp_name'], strtolower($path))) {
+                        if (move_uploaded_file($_FILES['glImg']['tmp_name'], $path)) {
                             // File uploaded
                         } else {
                             echo 'Failed to upload your image';
                             exit();
                         }
-                        // Resize the image
+
                         $image = new ImageResize($path);
                         $image->gamma(false);
-                        $image->quality_jpg = 90;
+                        $image->quality_jpg = 75;
                         $image->interlace = 0;
                         $image
                             ->resizeToWidth(1024)
@@ -1248,14 +1579,25 @@ class Admins extends Base
                             ->resizeToWidth(200)
                             ->save($path2);
 
+                        /// Grab uploaded image and create a webp version
+                        $im = imagecreatefromjpeg($path);
+                        $web_p = pathinfo($path);
+                        $im1 = imagecreatefromjpeg($path1);
+                        $web_p1 = pathinfo($path1);
+                        $im2 = imagecreatefromjpeg($path2);
+                        $web_p2 = pathinfo($path2);
+                        // Convert it to a webp file with 75% quality
+                        imagewebp($im, $directory . '/' . $web_p['filename'] . '.webp', 75);
+                        imagewebp($im1, $directory1 . '/' . $web_p1['filename'] . '.webp', 75);
+                        imagewebp($im2, $directory2 . '/' . $web_p2['filename'] . '.webp', 75);
+                        imagedestroy($im);
+                        imagedestroy($im1);
+                        imagedestroy($im2);
                     }
-                    else {
-                        // If no new file set the current DATABASE VALUE AS DEFAULT
-                        $new_name = $data['glImg'];
-                    }
+
+                }
 
                 if ($this->imageModel->saveImage($data, $new_name)) {
-
                     flash('resume_message', 'Image added');
                     redirect('admins/addImage');
                     exit();
@@ -1264,7 +1606,7 @@ class Admins extends Base
 
                     echo "Unable to save data";
                 }
-                } } else {
+            } else {
 
                 // SHOW ERRORS
                 $this->adminHeader();
@@ -1281,6 +1623,7 @@ class Admins extends Base
         $this->adminFooter();
 
     }
+
 
 
     public function addVideo()
@@ -1475,6 +1818,68 @@ class Admins extends Base
     }
 
 
+
+
+    public function addTodo()
+    {
+
+        $todo = $this->pageModel->getToDoList();
+        $data =
+            [
+                $todo = $todo,
+                'DoTitle_err' => '',
+                'DoDesc_err' => ''
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    $todo = $todo,
+                    'DoTitle_err' => '',
+                    'DoDesc_err' => '',
+                    'DoTitle' => trim($_POST['DoTitle']),
+                    'DoDesc' => trim($_POST['Dodesc'])
+                ];
+
+            if (empty($data['DoTitle'])) {
+                $data['DoTitle_err'] = 'Please add title';
+            }
+            if (empty($data['DoDesc'])) {
+                $data['DoDesc_err'] = 'Please add description';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['DoTitle_err']) and empty($data['DoDesc_err'])) {
+
+                if ($this->adminModel->saveTodo($data)) {
+
+                    flash('success', 'todo saved');
+                    redirect('admins/addTodo');
+
+                } else {
+                    echo "Unable to save data";
+                }
+               } else {
+                /// SHOW ERRORS VIEW
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/addTodo', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/addTodo', $data);
+        $this->adminFooter();
+
+    }
+
+
 /////////// MAIL FUNCTIONS //////////////////////////////////////////////
     public function sendNewsBulk()
     {
@@ -1631,18 +2036,24 @@ class Admins extends Base
             $del = $_POST['files'];
             $id = implode(',', $del);
             // GET ALL THE IMAGES FROM THE CHECKBOX IDS
-            $get_img = $this->adminModel->getSelectedImg($id);
+            $get_img = $this->imageModel->getSelectedImg($id);
             // SET PATH TO DIRECTORIES
             $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg';
             $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
             $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
 
-            if ($this->adminModel->delImage($id)) {
+
+            if ($this->imageModel->delImage($id)) {
                 // DELETING ALL THE ITEMS WITHIN THE ARRAY.
                 foreach ($get_img as $key => $un) :
+                  $web_p = pathinfo($un->gl_img);
                   unlink( $directory . '/' . trim($un->gl_folder) . '/' . $un->gl_img );
-                  unlink( $directory1 . '/' . $un->gl_img  );
-                  unlink( $directory2 . '/' . $un->gl_img );
+                  unlink( $directory1 . '/' . $un->gl_img);
+                  unlink( $directory2 . '/' . $un->gl_img);
+                  /// Delete the webp version
+                  unlink( $directory . '/' . trim($un->gl_folder) . '/' . $web_p['filename'].'.webp');
+                  unlink( $directory1 . '/' . trim($un) . '/' . $web_p['filename'].'.webp');
+                  unlink( $directory2 . '/' . trim($un) . '/' . $web_p['filename'].'.webp');
                  endforeach;
 
                 flash('resume_message', 'Image(s) deleted');
@@ -1680,6 +2091,23 @@ class Admins extends Base
 
 
 
+    public function deleteStoryCategory()
+    {
+        // DELETING ALL THE ITEMS WITHIN THE ARRAY. NOTE: BULK DELETE SHOULD BE AVOIDED USING A FOREACH LOOP.
+        //if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ( isset( $_POST[ 'bulk_delete' ] ) ) {
+
+            $del = $_POST['files'];
+            $id = implode(',', $del);
+
+            if ($this->postModel->delStoryCategory($id)) {
+                flash('resume_message', 'Data deleted');
+                redirect('admins/addStoryCategory');
+            } else { exit('Something went wrong'); }
+
+        } else { redirect('admins/addStoryCategory');
+        }
+    }
 
 
 }

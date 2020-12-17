@@ -1,4 +1,4 @@
-<div class="col-sm-10 profileCard mb-5 table-responsive">
+<div class="col-sm-10 profileCard mb-5">
     <div class="profileCard-heading text-center mn-3">Photo list
         <?php
         foreach ($data['countImages'] as $count) : ?>
@@ -9,6 +9,7 @@
     </div>
 
     <form action="<?php echo URLROOT; ?>/admins/deleteImage" method="post">
+  <div class="table-responsive">
     <table class="table table-sm table-striped table-bordered reports">
 
         <thead class="thead-dark mb-2">
@@ -34,7 +35,12 @@
                     <th class="text-center text-md-left" scope="col"><?php echo $gl->gl_cat_title; ?></th>
                     <th class="text-center text-md-left" scope="col"><?php echo $gl->gl_title; ?></th>
                     <th class="text-center text-md-left" scope="col"><?php echo $gl->gl_desc; ?></th>
-                    <th class="text-center text-md-left" scope="col"><img class="img-fluid" src="<?php echo URLROOT . '/photoImg/thumbs/' . $gl->gl_img; ?>" alt="<?php echo $gl->gl_img; ?>"></th>
+                    <th class="text-center text-md-left" scope="col"><img width="130" class="lazyload" data-src="<?php echo URLROOT . '/photoImg/thumbs/' . $gl->gl_img; ?>" alt="<?php echo $gl->gl_img; ?>">
+                        <!-- Trigger -->
+                        <a href="#" class="border-0 photoLink" data-clipboard-action="copy" data-toggle="tooltip" title="Link copied" data-clipboard-text="<?php echo URLROOT . '/photoImg/mobile/' . $gl->gl_img; ?>">
+                            Copy
+                        </a>
+                    </th>
                     <th class="text-center text-md-left" scope="col"><?php echo infoDate($gl->gl_created); ?></th>
                     <th class="text-center p-1" scope="col"><a href="<?php echo URLROOT . '/admins/editImage/' . $gl->gl_id; ?>" class="btn btn-block btn-light btn-sm btn-block-xs"><i class="far fa-edit"></i></a></th>
                 </tr>
@@ -46,5 +52,6 @@
         </thead>
 
     </table>
+  </div>
     </form>
 </div>
