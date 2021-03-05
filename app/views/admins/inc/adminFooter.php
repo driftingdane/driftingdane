@@ -45,16 +45,32 @@
 
 <script src="<?php echo URLROOT; ?>/js/adm/jquery.mCustomScrollbar.concat.min.js" type="text/javascript"></script>
 <script src="https://cdn.tiny.cloud/1/moy3taxyiui51g7l4w3ank9v3csjglscil6oeyfofjd5kaqr/tinymce/5.1.5-67/tinymce.min.js"></script>
-<!--<script src="<?php echo URLROOT; ?>/js/adm/tinymce5/js/tinymce/tinymce.min.js" type="text/javascript"></script>-->
+
 <script src="<?php echo URLROOT; ?>/js/adm/admin.js" type="text/javascript"></script>
 <script src="<?php echo URLROOT; ?>/js/adm/clipboard.min.js" type="text/javascript"></script>
 <script src="<?php echo URLROOT; ?>/js/adm/lazysizes.min.js" async="" type="text/javascript"></script>
-
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/cr-1.5.2/datatables.min.js"></script>
+<script src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js" async="" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.7/js/dataTables.responsive.min.js" async="" type="text/javascript"></script>
 <script>
-    // Clipboard
-   // new ClipboardJS('.photoLink');7
 
+    $(document).ready(function() {
+        let table = $('.reports').DataTable( {
+            "order": [[0,"desc"],[1,"asc"]],
+            rowReorder: {
+                selector: 'td:nth-child(2)'
+            },
+            responsive: true
+        });
+    });
+
+
+    function changeHiddenInput (objDropDown)
+    {
+        let t = $( "#glCat option:selected" ).text();
+        $('#hiddenInput').val(t);
+        return objDropDown;
+   }
     // Tooltip
 
     $('.photoLink').tooltip({
@@ -89,18 +105,6 @@
         setTooltip('Failed!');
         hideTooltip(btn);
     });
-
-
-    $('.reports').DataTable({
-        responsive: true
-    } );
-
-    function changeHiddenInput (objDropDown)
-    {
-        let t = $( "#glCat option:selected" ).text();
-        $('#hiddenInput').val(t);
-        return objDropDown;
-   }
 
 </script>
 </body>

@@ -8,7 +8,7 @@
 <head>
 
     <!--Custom Build CMS (Custom Build MVC) Created by: Morten Noerregaard
-          http://CraftinDev.com
+          https://CraftinDev.com
           Programming by: Morten Noerregaard
           Design by: Morten Noerregaard
           Any Wordpress or framework? NO!!!!  -->
@@ -40,13 +40,13 @@
     <meta name="copyright" content="<?php echo CREATEDBYURL; ?>">
 
     <!-- Facebook OpenG -->
-    <meta property="fb:admins" content="106927574250954">
+    <meta property="fb:admins" content="100003663285343">
     <meta property="fb:app_id" content="">
     <meta property="og:type" content="website">
     <meta property="og:title" content="<?php echo $data['title']; ?>">
     <meta property="og:site_name" content="<?php echo SITENAME; ?>">
     <meta property="og:url" content="<?php echo URLROOT . '/' . $_GET['url']; ?>">
-    <meta property="og:image" content="<?php echo URLROOT . '/all_img/img/' . $data['ogImg']; ?>" type="image/png">
+    <meta property="og:image" content="<?php echo URLROOT . $data['ogImg']; ?>" type="image/png">
     <meta property="og:description" content="<?php echo strip_tags($data['siteDesc']); ?>">
     <!--TWITTER-->
     <meta property="twitter:card" content="summary">
@@ -54,8 +54,8 @@
     <meta property="twitter:description" content="<?php echo strip_tags($data['siteDesc']); ?>">
     <meta property="twitter:creator" content="<?php echo $data['creator']; ?>">
     <meta property="twitter:url" content="<?php echo URLROOT . '/' . $_GET['url']; ?>">
-    <meta property="twitter:image" content="<?php echo URLROOT . '/all_img/img/' . $data['ogImg']; ?>" type="image/png">
-    <meta property="twitter:image:alt" content="<?php echo URLROOT . '/all_img/img/' . $data['ogImg']; ?>" type="image/png">
+    <meta property="twitter:image" content="<?php echo URLROOT . $data['ogImg']; ?>" type="image/png">
+    <meta property="twitter:image:alt" content="<?php echo URLROOT . $data['ogImg']; ?>" type="image/png">
 
     <!--GOOGLE+-->
     <link rel="author" href="<?php echo $data['creator']; ?>">

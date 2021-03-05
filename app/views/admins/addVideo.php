@@ -1,16 +1,16 @@
 <div id="page-content"><!-- Needed for sticky footer-->
     <main role="main">
         <section>
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-10 mx-auto">
+                    <div class="col-sm-9 mx-auto">
                         <div class="card card-body bg-light mb-5">
                             <?php echo flash('resume_message'); ?>
-                            <h2>Add post</h2>
+                            <h2>Add Video</h2>
                             <?php echo flash_error('resume_errors'); ?>
                             <p>Please fill in all fields with <sub>*</sub></p>
                             <form action="<?php echo URLROOT; ?>/admins/addVideo" class="icon-form process" enctype="multipart/form-data" method="post" novalidate>
-                                <input type="hidden" name="token" value="<?php echo createToken(); ?>">
+                                <input type="hidden" name="token" value="<?php //echo createToken(); ?>">
                                 <div class="col-md-12 mb-3">
                                     <label for="vdCat"><i class="far fa-flag formIcons"></i> Category: <sub>*</sub></label>
                                     <select id="vdCat" name="vdCat" class="custom-select custom-select-lg mb-3 <?php echo (!empty($data['vdCat_err'])) ? 'is-invalid' : ''; ?>" required>

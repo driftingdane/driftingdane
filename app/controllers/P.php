@@ -14,7 +14,6 @@ class P extends Base
         $data = [
 
             'title' => 'Home',
-            'todo' => $this->todo,
             'siteName' => $this->site->site_name,
             'siteDesc' => $this->site->site_desc,
             'siteWelcome' => $this->site->site_welcome,
@@ -157,49 +156,33 @@ class P extends Base
     }
 
 
-
-    public function toDoList()
-    {
-        $todo = $this->pageModel->getToDoList();
-
-        $data =
-            [
-                $todo = $todo
-            ];
-
-        /// SHOW DEFAULT VIEW
-        $this->view('admins/addTodo', $data);
-    }
-
-
-
     public function subscribe() {
 
         $data =
             [
                 'title' => 'Subscribe to our newsletter',
-                'siteDesc' => 'Stay up to date on our English excursions, events, in and around Sao Paulo',
-                'siteImg' => $this->site->site_logo,
-                'ogImg' => 'banner6.jpg',
-                'siteName' => $this->site->site_name,
+                'siteDesc' => 'Hello! i am happy you want to read my personal travel stories.',
             ];
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             // Send a token for validating user later by email
             $hash = bin2hex(random_bytes(32));
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
             $data =
                 [
                     'title' => 'Subscribe to our newsletter',
-                    'siteDesc' => 'Stay up to date on our English excursions, events, in and around Sao Paulo',
+                    'siteDesc' => 'Hello! i am happy you want to read my personal travel stories.',
                     'ownerEmail' => $this->site->site_contact_mail,
-                    'siteImg' => $this->site->site_logo,
-                    'ogImg' => 'logo-fluencyonlife.com-share.png',
                     'email' => trim($_POST['subEmail']),
                     'hash' => $hash,
                     'subEmail_err' => ''
                 ];
+            
+            $clean =
+                array(
+                    'email' => FILTER_SANITIZE_EMAIL,
+                );
+
+            $_POST = filter_input_array(INPUT_POST, $clean);
 
             if(empty($data['email'])) {
                 $data['subEmail_err'] = "Please add a valid email";
@@ -209,10 +192,8 @@ class P extends Base
 
                 if($this->adminModel->saveEmail($data)) {
                     flash('success', 'Success! Thanks for subscribing');
-                    $this->subscribe_greeting($data);
                     redirect('stories');
-                    exit();
-
+                    $this->subscribe_greeting($data);
                 } else {
                     echo "Something went wrong.";
                 }
@@ -227,38 +208,40 @@ class P extends Base
         }
         // Show default view
         $this->standardHeader($data);
-        $this->view('stories');
+        $this->view('stories', $data);
     }
 
 
 
     public function subscribe_greeting($data)
     {
-        $title = "Thanks for subscribing.";
-        $content = "I im excited about you wanting to read my personal stories.";
+        $title = "Drifting Dane > Thanks for subscribing.";
+        $content = "I im happy and excited about you wanting to read my personal stories.";
         // Create the Transport
-        $transport = (new Swift_SmtpTransport('localhost', 25));
+        $transport = (new Swift_SmtpTransport('smtp.gmail.com', 587, 'tls'))
+            ->setUsername('profengbrazil@gmail.com')
+            ->setPassword('Professor1976');
         // Create the Mailer using your created Transport
         $mailer = new Swift_Mailer($transport);
         // Create a message
-        $message = (new Swift_Message($title))->setFrom(array($data['ownerEmail']))->setTo(array($data['email']))->setBody('
+        $message = (new Swift_Message($title))->setFrom(array('hello@driftingdane.com'))->setTo(array($data['email']))->setBody('
                     <html>
                      <body><table width="600">
                      <tr><td>
                      </td></tr>
                       <h2>' . $title . '</h2>
                        <tr><td style="font-size: 14px;">' . $content . '</td></tr>
+                       <tr><td style="font-size: 14px;"><p><a href="https://driftingdane.com/p/unsubscribe">You can always unsubscribe here</a></p></td></tr>
                      </table></body>
                     </html>', "text/html");
         // Add alternative parts with addPart()
         $message->addPart($title, $content, 'text/plain');
         $headers = $message->getHeaders();
-        $headers->addTextHeader('List-Unsubscribe', URLROOT. "/unsubscribe");
+        $headers->addTextHeader('List-Unsubscribe', URLROOT. "/p/unsubscribe");
         $mailer->send($message);
 
 
     }
-
 
 
     public function unsubscribe()
@@ -268,7 +251,7 @@ class P extends Base
                 'title' => 'Unsubscribe',
                 'siteName' => $this->site->site_name,
                 'siteImg' => $this->site->site_logo,
-                'ogImg' => 'logo-fluencyonlife.com-share.png',
+                'ogImg' => $this->site->site_logo,
             ];
 
 
@@ -278,7 +261,7 @@ class P extends Base
                 [
                     'title' => 'Unsubscribe',
                     'siteImg' => $this->site->site_logo,
-                    'ogImg' => 'logo-fluencyonlife.com-share.png',
+                    'ogImg' => $this->site->site_logo,
                     'email' => $_POST['unEmail'],
                     'confirm_email' => $_POST['confirm_email'],
                     'unEmail_err' => '',

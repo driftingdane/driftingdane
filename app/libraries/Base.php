@@ -15,7 +15,6 @@ class Base
     public $socials;
     public $slider;
     public $flex;
-    public $todo;
 
     public function __construct()
     {
@@ -34,7 +33,6 @@ class Base
         $this->socials = $this->pageModel->getSocials();
         $this->slider = $this->slideModel->getAllSlides();
         $this->flex = $this->slideModel->getFlex();
-        $this->todo = $this->pageModel->getToDoList();
 
     }
 

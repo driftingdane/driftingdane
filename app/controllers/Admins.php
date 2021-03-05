@@ -1,13 +1,19 @@
 <?php
+// Import image resize
 use Gumlet\ImageResize;
+
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 class Admins extends Base
 {
 
+    /////////////////////////////// CHECK ACCESS /////////////////////////////////////////////////////////////////////
+
     public function __construct()
     {
         parent::__construct();
-
 
         if (!isLoggedIn()) {
             redirect('users/login');
@@ -20,6 +26,9 @@ class Admins extends Base
         }
 
     }
+
+
+/////////////////////////////// EDIT  FUNCTIONS /////////////////////////////////////////////////////////////////////
 
     public function socials()
     {
@@ -148,7 +157,7 @@ class Admins extends Base
                         chmod($path, 755);
                     }
 
-                    if (move_uploaded_file($_FILES['site_logo']['tmp_name'], strtolower($path))) {
+                    if (move_uploaded_file($_FILES['site_logo']['tmp_name'], $path)) {
                         // File uploaded
                     } else {
                         echo 'Failed to upload your image';
@@ -218,6 +227,798 @@ class Admins extends Base
         $this->adminFooter();
 
     }
+
+    /////////////////////////////// EDIT FUNCTIONS /////////////////////////////////////////////////////////////////////
+
+
+
+    public function editStoryCategory($id)
+    {
+
+        $categories = $this->postModel->getCategories();
+        $catById = $this->postModel->getStoryByCatId($id);
+
+        $data =
+            [
+                'categories' => $categories,
+                'catById' => $catById,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'glCatId' =>  $id,
+                    'catById' => $catById,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glTitle_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err'])) {
+
+                if ($this->postModel->updateStoryCatData($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/editStoryCategory/' . $id);
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/editStoryCategory', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editStoryCategory', $data);
+        $this->adminFooter();
+
+    }
+
+
+    public function editCategory($id)
+    {
+
+        $categories = $this->imageModel->getGalleryCategories();
+        $catById = $this->imageModel->getCatById($id);
+
+        $data =
+            [
+                'categories' => $categories,
+                'catById' => $catById,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'glCatId' =>  $id,
+                    'catById' => $catById,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glTitle_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err'])) {
+
+                if ($this->imageModel->updateCatData($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/editCategory/' . $id);
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/editCategory', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editCategory', $data);
+        $this->adminFooter();
+
+    }
+
+
+    public function editImage($id)
+    {
+
+        $images = $this->imageModel->getAllImages();
+        $imageById = $this->imageModel->getImageById($id);
+        $categories = $this->imageModel->getGalleryCategories();
+        $countImages = $this->imageModel->countImages();
+
+        $data =
+            [
+                'images' => $images,
+                'imageById' => $imageById,
+                'categories' => $categories,
+                'countImages' => $countImages,
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $returnUrl = $_POST['returnUrl'];
+
+            // CHECK FOR CSRF ATTACK
+            //if (validateToken() === false) {
+                //// SHOW ERRORS
+               // flash_error('token_error', 'Token mismatch!');
+               // redirect('admins/editImage' . $returnUrl);
+           // }
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'images' => $images,
+                    'imageById' => $imageById,
+                    'glId' => $id,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glCat' => trim($_POST['glCat']),
+                    'glTitle_err' => '',
+                    'glCat_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+            if (empty($data['glCat'])) {
+                $data['glCat_err'] = 'Please select category';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err']) and empty($data['glCat_err'])) {
+
+                if ($this->imageModel->updateImageData($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/editImage/' . $returnUrl);
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/editImage', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editImage', $data);
+        $this->adminFooter();
+
+    }
+
+
+    public function editSlide($id)
+    {
+        $slides = $this->slideModel->getAllSlides();
+        $slideById = $this->slideModel->getSlideById($id);
+
+        $data =
+            [
+                'slides' => $slides,
+                'slideById' => $slideById
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'slides' => $slides,
+                    'slideById' => $slideById,
+                    'slId' => $id,
+                    'slTitle' => trim($_POST['slTitle']),
+                    'slDesc' => trim($_POST['slDesc']),
+                    'slData' => trim($_POST['slData']),
+                ];
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if ($this->slideModel->updateSlide($data)) {
+
+                flash('resume_message', 'Slide updated');
+
+                redirect('admins/editSlide/' . $id);
+                exit();
+
+            } else {
+                echo "Unable to save data";
+            }
+        } else {
+
+            // SHOW ERRORS
+            $this->adminHeader();
+            $this->adminNav();
+            $this->view('admins/editSlide', $data);
+            $this->adminFooter();
+
+        }
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editSlide', $data);
+        $this->adminFooter();
+    }
+
+
+    public function editVideo($id)
+    {
+
+        $videos = $this->videoModel->getAllVideos();
+        $videoById = $this->videoModel->getVideoById($id);
+        $categories = $this->videoModel->getVideoCategories();
+        $countVideos = $this->videoModel->countVideos();
+
+        $data =
+            [
+                'videos' => $videos,
+                'videoById' => $videoById,
+                'categories' => $categories,
+                'countVideos' => $countVideos
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $returnUrl = $_POST['returnUrl'];
+
+            $data =
+                [
+                    'videos' => $videos,
+                    'categories' => $categories,
+                    'videoById' => $videoById,
+                    'vdId' => $id,
+                    'vdTitle' => trim($_POST['vdTitle']),
+                    'vdDesc' => trim($_POST['vdDesc']),
+                    'vdEmbed' => trim($_POST['vdEmbed']),
+                    'vdCat' => trim($_POST['vdCat']),
+                    'vdTitle_err' => '',
+                    'vdEmbed_err' => '',
+                    'vdCat_err' => ''
+
+                ];
+
+            if (empty($data['vdTitle'])) {
+                $data['vdTitle_err'] = 'Please add title';
+            }
+            if (empty($data['vdEmbed'])) {
+                $data['vdEmbed_err'] = 'Please add embed code';
+            }
+            if (empty($data['vdCat'])) {
+                $data['vdCat_err'] = 'Please select category';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['vdTitle_err']) and empty($data['vdEmbed_err']) and empty($data['vdCat_err'])) {
+
+                if ($this->videoModel->updateVideo($data)) {
+                    flash('resume_message', 'Video updated');
+                    redirect($returnUrl);
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/editVideo', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editVideo', $data);
+        $this->adminFooter();
+
+    }
+
+
+    public function editNews($id = '')
+    {
+
+        $news = $this->adminModel->getAllNews();
+        $onenews = $this->adminModel->getNewsById($id);
+        // Check for ID
+        if (empty($id)) {
+            redirect('admins');
+        }
+        // Load page data
+        $data =
+            [
+                'news' => $news,
+                'onenews' => $onenews
+
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $returnUrl = $_POST['returnUrl'];
+
+            // Because we are submitting html from our editor we disable filter input array.
+            //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            $data =
+                [
+                    'nsId' => $id,
+                    'nsTitle' => trim($_POST['nsTitle']),
+                    'nsMsg' => trim($_POST['nsMsg']),
+                    'news' => $news,
+                    'onenews' => $onenews,
+                    'nsTitle_err' => '',
+                    'nsMsg_err' => ''
+
+                ];
+
+            if (empty($data['nsTitle'])) {
+                $data['nsTitle_err'] = 'Please add a title';
+            }
+
+            if (empty($data['nsMsg'])) {
+                $data['nsMsg_err'] = 'Please write some news';
+            }
+
+            if (empty($data['nsTitle_err']) and empty($data['nsMsg_err'])) {
+
+                if ($this->adminModel->updateNews($data)) {
+
+                    flash('resume_message', 'Newsletter updated');
+                    redirect($returnUrl);
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/editNews', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/editNews', $data);
+        $this->adminFooter();
+
+    }
+
+
+    /**
+     * @param $id
+     * @throws Exception
+     */
+    public function editPost($id)
+    {
+
+        $categories = $this->postModel->getCategories();
+        $posts = $this->postModel->getPosts();
+        $postById = $this->postModel->getPostById($id);
+
+        $data =
+            [
+                'categories' => $categories,
+                'posts' => $posts,
+                'postById' => $postById,
+
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Bring our return url
+            $returnUrl = $_POST['returnUrl'];
+
+            // CHECK FOR CSRF ATTACK
+            //if (validateToken() === false) {
+            //// SHOW ERRORS
+            //flash_error('token_error', 'Token mismatch!');
+            //redirect('admins/editPost/' . $returnUrl);
+            //}
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'posts' => $posts,
+                    'psId' => $_POST['psId'],
+                    'psTitle' => trim($_POST['psTitle']),
+                    'psSubTitle' => trim($_POST['psSubTitle']),
+                    'psPost' => trim($_POST['psPost']),
+                    'catId' => $_POST['catId'],
+                    'cat_err' => '',
+                    'psTitle_err' => '',
+                    'psPost_err' => '',
+                ];
+
+            $args = array(
+                'psTitle' => FILTER_SANITIZE_STRING,
+            );
+
+            $_POST = filter_input_array(INPUT_POST, $args);
+
+            // Validate data
+            if (empty($data['catId'])) {
+                $data['cat_err'] = 'Please select category for post';
+            }
+            if (empty($data['psTitle'])) {
+                $data['psTitle_err'] = 'Please enter name';
+            }
+            if (empty($data['psPost'])) {
+                $data['psPost_err'] = 'Please write a story';
+            }
+
+            // Make sure no errors
+            if (empty($data['psTitle_err']) and empty($data['psPost_err']) and empty($data['cat_err'])) {
+                // Validated
+                if ($this->postModel->updatePost($data)) {
+                    flash('resume_message', 'Post updated');
+                    redirect('admins/editPost/' . $returnUrl);
+                } else {
+                    exit('Something went wrong');
+                }
+            } else {
+
+                // Show errors
+                $this->adminHeader($data);
+                $this->adminNav();
+                flash_error('resume_errors', 'Please correct the error(s)');
+                $this->view('admins/editPost', $data);
+                $this->adminFooter();
+
+            }
+
+        }
+        // SHow our view with all the required data before any POST
+        $this->adminHeader($data);
+        $this->adminNav();
+        $this->view('admins/editPost', $data);
+        $this->adminFooter();
+
+
+    }
+
+/////////////////////////////////////// ADD FUNCTIONS //////////////////////////////////////////////
+
+
+    public function addStoryCategory()
+    {
+
+        $categories = $this->postModel->getCategories();
+
+        $data =
+            [
+                'categories' => $categories,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glTitle_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err'])) {
+
+                if ($this->postModel->saveStoryCategory($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/addStoryCategory');
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/addStoryCategory', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/addStoryCategory', $data);
+        $this->adminFooter();
+
+    }
+
+
+    public function addCategory()
+    {
+
+        $categories = $this->imageModel->getGalleryCategories();
+
+        $data =
+            [
+                'categories' => $categories,
+                'glTitle' => trim($_POST['glTitle']),
+                'glDesc' => trim($_POST['glDesc']),
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+            $data =
+                [
+                    'categories' => $categories,
+                    'glTitle' => trim($_POST['glTitle']),
+                    'glDesc' => trim($_POST['glDesc']),
+                    'glTitle_err' => ''
+
+                ];
+
+            if (empty($data['glTitle'])) {
+                $data['glTitle_err'] = 'Please add title';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+            if (empty($data['glTitle_err'])) {
+
+                if ($this->imageModel->saveCategory($data)) {
+
+                    flash('resume_message', 'Data updated');
+                    redirect('admins/addCategory');
+                    exit();
+
+                } else {
+
+                    echo "Unable to save data";
+                }
+            } else {
+
+                // SHOW ERRORS
+                $this->adminHeader();
+                $this->adminNav();
+                $this->view('admins/addCategory', $data);
+                $this->adminFooter();
+
+            }
+        }
+
+        /// SHOW DEFAULT VIEW
+        $this->adminHeader();
+        $this->adminNav();
+        $this->view('admins/addCategory', $data);
+        $this->adminFooter();
+
+    }
+
+
+
+    public function addPost()
+    {
+
+        $categories = $this->postModel->getCategories();
+        $posts = $this->postModel->getPosts();
+
+        $data =
+            [
+                'cat_err' => '',
+                'psTitle_err' => '',
+                'psPost_err' => '',
+                'img_err' => '',
+                'categories' => $categories,
+                'posts' => $posts
+
+            ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        
+                // CHECK FOR CSRF ATTACK
+               if (validateToken() === false) {
+                //// SHOW ERRORS
+                flash_error('token_error', 'Token mismatch!');
+                redirect('admins/addPost');
+               }
+            
+            $data =
+                [
+                    'categories' => $categories,
+                    'posts' => $posts,
+                    'psTitle' => trim($_POST['psTitle']),
+                    'psSubTitle' => trim($_POST['psSubTitle']),
+                    'psPost' => trim($_POST['psPost']),
+                    'catId' => $_POST['catId'],
+                    'userId' => $_SESSION['user_id'],
+                    'post_img' => $_FILES['post_img']['name'],
+                    'cat_err' => '',
+                    'psTitle_err' => '',
+                    'psPost_err' => '',
+                    'img_err' => '',
+                ];
+
+
+            $args = array(
+                'psTitle' => FILTER_SANITIZE_STRING,
+            );
+
+            $_POST = filter_input_array(INPUT_POST, $args);
+
+            // Validate data
+            if (empty($data['catId'])) {
+                $data['cat_err'] = 'Please select category for post';
+            }
+            if (empty($data['psTitle'])) {
+                $data['psTitle_err'] = 'Please enter name';
+            }
+            if (empty($data['psPost'])) {
+                $data['psPost_err'] = 'Please write a story';
+            }
+
+            // Make sure no errors
+            if (empty($data['psTitle_err']) and empty($data['psPost_err']) and empty($data['cat_err'])) {
+                // Validated
+                // Check the file upload
+                //pass the file name to our mime type helper and check the type
+                if ($_FILES['post_img']['error'] == 0) {
+                    $type = (get_mime($_FILES['post_img']['tmp_name']));
+                    if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
+                        // File is excepted
+                    } else {
+                        $data['img_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
+                    }
+
+                    $size = $_FILES['post_img']['size'];
+                    if ($size > 31457280) {
+                        $data['img_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
+                    }
+                    // Set the upload directory
+                    $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/storyImg/';
+                    $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/storyImg/feat/';
+                    // If no folder create one with permissions
+                    if (!file_exists($directory)) {
+                        mkdir($directory, 755, true);
+                    }
+                    if (!file_exists($directory2)) {
+                        mkdir($directory2, 755, true);
+                    }
+                    // Rename filename
+                    $new_name = round(microtime(true)) . "_" . strtolower($_FILES['post_img']['name']);
+                    // Check if file exist and add write permissions
+                    $path = $directory . basename($new_name);
+                    $path2 = $directory2 . basename($new_name);
+
+                    if (file_exists($path)) {
+                        chmod($path, 755);
+                    }
+                    if (file_exists($path2)) {
+                        chmod($path2, 755);
+                    }
+
+                    if (move_uploaded_file($_FILES['post_img']['tmp_name'], $path)) {
+                        // File uploaded
+                    } else {
+                        echo 'Failed to upload your image';
+                    }
+                    // Resize the image
+                    $image = new ImageResize($path);
+                    $image->gamma(false);
+                    $image->quality_jpg = 85;
+                    $image->interlace = 0;
+                    $image
+                        ->crop(1200, 400, true, ImageResize::CROPCENTER)
+                        ->save($path)
+                        ->resizeToWidth(600)
+                        ->save($path2);
+                }
+                 elseif ($_FILES['post_img']['size'][0] == 0 and $_FILES['post_img']['tmp_name'][0] === '' and $data['noImg'] == 1) {
+                 
+                     $new_name = null;
+                 }
+
+                if ($this->postModel->savePost($data, $new_name)) {
+                    flash('resume_message', 'Post added');
+                    redirect('admins/addPost');
+                    exit();
+
+                } else {
+
+                    exit('Something went wrong');
+                }
+            } else {
+
+                // Show errors
+                $this->adminHeader($data);
+                $this->adminNav();
+                flash_error('resume_errors', 'Please correct the error(s)');
+                $this->view('admins/addPost', $data);
+                $this->adminFooter();
+
+            }
+
+        }
+
+        // SHow our view with all the required data before any POST
+        $this->adminHeader($data);
+        $this->adminNav();
+        $this->view('admins/addPost', $data);
+        $this->adminFooter();
+
+    }
+
 
 
     public function addEmail()
@@ -353,1131 +1154,10 @@ class Admins extends Base
 
     }
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public function editNews($id = '')
-    {
 
-        $news = $this->adminModel->getAllNews();
-        $onenews = $this->adminModel->getNewsById($id);
-        // Check for ID
-        if (empty($id)) {
-            redirect('admins');
-        }
-        // Load page data
-        $data =
-            [
-                'news' => $news,
-                'onenews' => $onenews
-
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $returnUrl = $_POST['returnUrl'];
-
-            // Because we are submitting html from our editor we disable filter input array.
-            //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            $data =
-                [
-                    'nsId' => $id,
-                    'nsTitle' => trim($_POST['nsTitle']),
-                    'nsMsg' => trim($_POST['nsMsg']),
-                    'news' => $news,
-                    'onenews' => $onenews,
-                    'nsTitle_err' => '',
-                    'nsMsg_err' => ''
-
-                ];
-
-            if (empty($data['nsTitle'])) {
-                $data['nsTitle_err'] = 'Please add a title';
-            }
-
-            if (empty($data['nsMsg'])) {
-                $data['nsMsg_err'] = 'Please write some news';
-            }
-
-            if (empty($data['nsTitle_err']) and empty($data['nsMsg_err'])) {
-
-                if ($this->adminModel->updateNews($data)) {
-
-                    flash('resume_message', 'Newsletter updated');
-                    redirect($returnUrl);
-                    exit();
-
-                } else {
-
-                    echo "Unable to save data";
-                }
-            } else {
-
-                // SHOW ERRORS
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/editNews', $data);
-                $this->adminFooter();
-
-            }
-        }
-
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/editNews', $data);
-        $this->adminFooter();
-
-    }
-
-
-    /**
-     * @param $id
-     * @throws Exception
-     */
-    public function editPost($id)
-    {
-
-        $categories = $this->postModel->getCategories();
-        $posts = $this->postModel->getPosts();
-        $postById = $this->postModel->getPostById($id);
-
-        $data =
-            [
-                'categories' => $categories,
-                'posts' => $posts,
-                'postById' => $postById,
-
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Bring our return url
-            $returnUrl = $_POST['returnUrl'];
-
-            // CHECK FOR CSRF ATTACK
-            if (validateToken() === false) {
-                //// SHOW ERRORS
-                flash_error('token_error', 'Token mismatch!');
-                redirect('admins/editPost/' . $returnUrl);
-            }
-
-            $data =
-                [
-                    'categories' => $categories,
-                    'posts' => $posts,
-                    'psId' => $_POST['psId'],
-                    'psTitle' => trim($_POST['psTitle']),
-                    'psSubTitle' => trim($_POST['psSubTitle']),
-                    'psPost' => trim($_POST['psPost']),
-                    'catId' => $_POST['catId'],
-                    'cat_err' => '',
-                    'psTitle_err' => '',
-                    'psPost_err' => '',
-                ];
-
-            $args = array(
-                'psTitle' => FILTER_SANITIZE_STRING,
-            );
-
-            $_POST = filter_input_array(INPUT_POST, $args);
-
-            // Validate data
-            if (empty($data['catId'])) {
-                $data['cat_err'] = 'Please select category for post';
-            }
-            if (empty($data['psTitle'])) {
-                $data['psTitle_err'] = 'Please enter name';
-            }
-            if (empty($data['psPost'])) {
-                $data['psPost_err'] = 'Please write a story';
-            }
-
-            // Make sure no errors
-            if (empty($data['psTitle_err']) and empty($data['psPost_err']) and empty($data['cat_err'])) {
-                // Validated
-                if ($this->postModel->updatePost($data)) {
-
-                    flash('resume_message', 'Post updated');
-                    redirect('admins/editPost/' . $returnUrl);
-                } else {
-                    exit('Something went wrong');
-                }
-            } else {
-
-                // Show errors
-                $this->adminHeader($data);
-                $this->adminNav();
-                //flash_error('resume_errors', 'Please correct the error(s)');
-                $this->view('admins/editPost', $data);
-                $this->adminFooter();
-
-            }
-
-        } else {
-
-            // SHow our view with all the required data before any POST
-            $this->adminHeader($data);
-            $this->adminNav();
-            $this->view('admins/editPost', $data);
-            $this->adminFooter();
-        }
-
-    }
-
-    /////// INSERT FUNCTIONS
-    public function addPost()
-    {
-
-        $categories = $this->postModel->getCategories();
-        $posts = $this->postModel->getPosts();
-
-        $data =
-            [
-                'psTitle' => '',
-                'psSubTitle' => '',
-                'psPost' => '',
-                'cat_err' => '',
-                'categories' => $categories,
-                'posts' => $posts
-
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // CHECK FOR CSRF ATTACK
-            if (validateToken() === false) {
-                //// SHOW ERRORS
-                flash_error('token_error', 'Token mismatch!');
-            }
-
-            $data =
-                [
-                    'categories' => $categories,
-                    'posts' => $posts,
-                    'psTitle' => trim($_POST['psTitle']),
-                    'psSubTitle' => trim($_POST['psSubTitle']),
-                    'psPost' => trim($_POST['psPost']),
-                    'catId' => trim($_POST['catId']),
-                    'userId' => $_SESSION['user_id'],
-                    'cat_err' => '',
-                    'psTitle_err' => '',
-                    'psPost_err' => '',
-                    'img_err' => '',
-                ];
-
-
-            $args = array(
-                'psTitle' => FILTER_SANITIZE_STRING,
-            );
-
-            $_POST = filter_input_array(INPUT_POST, $args);
-
-            // Validate data
-            if (empty($data['catId'])) {
-                $data['cat_err'] = 'Please select category for post';
-            }
-            if (empty($data['psTitle'])) {
-                $data['psTitle_err'] = 'Please enter name';
-            }
-            if (empty($data['psPost'])) {
-                $data['psPost_err'] = 'Please write a story';
-            }
-
-            // Make sure no errors
-            if (empty($data['psTitle_err']) and empty($data['psPost_err']) and empty($data['cat_err'])) {
-                // Validated
-                // Check the file upload
-                //pass the file name to our mime type helper and check the type
-                if ($_FILES['post_img']['error'] == 0) {
-                    $type = (get_mime($_FILES['post_img']['tmp_name']));
-                    if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
-                        // File is excepted
-                    } else {
-                        $data['img_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
-                    }
-
-                    $size = $_FILES['post_img']['size'];
-                    if ($size > 31457280) {
-                        $data['img_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
-                    }
-                    // Set the upload directory
-                    $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/storyImg/';
-                    $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/storyImg/feat/';
-                    // If no folder create one with permissions
-                    if (!file_exists($directory)) {
-                        mkdir($directory, 755, true);
-                    }
-                    // Rename filename
-                    $new_name = round(microtime(true)) . "_" . strtolower($_FILES['post_img']['name']);
-                    // Check if file exist and add write permissions
-                    $path = $directory . basename($new_name);
-                    $path2 = $directory2 . basename($new_name);
-
-                    if (file_exists($path)) {
-                        chmod($path, 755);
-                    }
-
-                    if (move_uploaded_file($_FILES['post_img']['tmp_name'], strtolower($path))) {
-                        // File uploaded
-                    } else {
-                       echo 'Failed to upload your image';
-                        echo strtolower($path);
-                        exit();
-                    }
-                    // Resize the image
-                    $image = new ImageResize($path);
-                    $image->gamma(false);
-                    $image->quality_jpg = 90;
-                    $image->interlace = 0;
-                    $image
-                        ->crop(1200, 400, true, ImageResize::CROPCENTER)
-                        ->save($path)
-                        ->resizeToWidth(600)
-                        ->save($path2);
-
-                } elseif ($_FILES['post_img']['size'][0] == 0 and $_FILES['post_img']['tmp_name'][0] === '' and $data['noImg'] == 1) {
-
-                    $new_name = null;
-
-                } else {
-                    // If no new file set the current DATABASE VALUE AS DEFAULT
-                    $new_name = $data['sameFile'];
-                }
-                if ($this->postModel->savePost($data, $new_name)) {
-
-                    flash('resume_message', 'Post added');
-                    redirect('admins/addPost');
-                } else {
-                    exit('Something went wrong');
-                }
-            } else {
-
-                // Show errors
-                $this->adminHeader($data);
-                $this->adminNav();
-                //flash_error('resume_errors', 'Please correct the error(s)');
-                $this->view('admins/addPost', $data);
-                $this->adminFooter();
-
-            }
-
-        } else {
-
-            // SHow our view with all the required data before any POST
-            $this->adminHeader($data);
-            $this->adminNav();
-            $this->view('admins/addPost', $data);
-            $this->adminFooter();
-        }
-
-    }
-
-
-    public function uploadImgSlide(){
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Bring our return url
-            $returnUrl = $_POST['returnUrl'];
-            // CHECK FOR CSRF ATTACK
-            if (validateToken() === false) {
-                //// SHOW ERRORS
-                flash_error('token_error', 'Token mismatch!');
-                redirect('admins/editSlide/' . $returnUrl);
-            }
-            $data =
-                [
-                    'slide_img' => $_FILES['slide_img']['name'],
-                    'slId' => $_POST['slId'],
-                    'img_err' => ''
-                ];
-
-            $args = array(
-                'slide_img' => FILTER_SANITIZE_STRING,
-            );
-
-            $_POST = filter_input_array(INPUT_POST, $args);
-            // Check the file upload
-            //pass the file name to our mime type helper and check the type
-            if ($_FILES['slide_img']['error'] == 0) {
-                $type = (get_mime($_FILES['slide_img']['tmp_name']));
-                if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
-                    // File is excepted
-                } else {
-                    $data['img_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
-                }
-
-                $size = $_FILES['slide_img']['size'];
-                if ($size > 31457280) {
-                    $data['img_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
-                }
-                // Set the upload directory
-                $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/';
-                $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/mobile/';
-                // If no folder create one with permissions
-                if (!file_exists($directory)) {
-                    mkdir($directory, 755, true);
-                }
-                if (!file_exists($directory2)) {
-                    mkdir($directory2, 755, true);
-                }
-                // Rename filename
-                $new_name = round(microtime(true)) . "_" . strtolower($_FILES['slide_img']['name']);
-                // Check if file exist and add write permissions
-                $path = $directory . basename($new_name);
-                $path1 = $directory2 . basename($new_name);
-
-                if (file_exists($path)) {
-                    chmod($path, 755);
-                }
-                if (move_uploaded_file($_FILES['slide_img']['tmp_name'], strtolower($path))) {
-                    // File uploaded
-                } else {
-                    echo 'Failed to upload your image';
-                    exit();
-                }
-                // Resize the image
-                $image = new ImageResize($path);
-                $image->gamma(false);
-                $image->quality_jpg = 90;
-                $image->interlace = 0;
-                $image
-                    ->crop(1350, 550)
-                    ->save($path)
-                    ->crop(650, 150)
-                    ->save($path1);
-
-            } elseif ($_FILES['slide_img']['size'][0] == 0 and $_FILES['slide_img']['tmp_name'][0] === '' and $data['noImg'] == 1) {
-
-                $new_name = null;
-
-            } else {
-                // If no new file set the current DATABASE VALUE AS DEFAULT
-                $new_name = $data['sameFile'];
-            }
-
-            if ($this->slideModel->updateImgSlide($data, $new_name)) {
-
-                flash('resume_message', 'Image updated');
-                redirect('admins/editSlide/' . $returnUrl);
-                exit();
-
-            } else {
-                exit('Something went wrong');
-            }
-            // Show errors
-            $this->adminHeader($data);
-            $this->adminNav();
-            flash_error('resume_errors', 'Please correct the error(s)');
-            $this->view('admins/editSlide', $data);
-            $this->adminFooter();
-
-        }
-    }
-
-
-
-    public function uploadImg()
-    {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Bring our return url
-            $returnUrl = $_POST['returnUrl'];
-            // CHECK FOR CSRF ATTACK
-            if (validateToken() === false) {
-                //// SHOW ERRORS
-                flash_error('token_error', 'Token mismatch!');
-                redirect('admins/editPost/' . $returnUrl);
-            }
-            $data =
-                [
-                    'post_img' => $_FILES['post_img']['name'],
-                    'psId' => $_POST['psId']
-                ];
-
-            $args = array(
-                'post_img' => FILTER_SANITIZE_STRING,
-            );
-
-            $_POST = filter_input_array(INPUT_POST, $args);
-            // Check the file upload
-            //pass the file name to our mime type helper and check the type
-            if ($_FILES['post_img']['error'] == 0) {
-                $type = (get_mime($_FILES['post_img']['tmp_name']));
-                if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
-                    // File is excepted
-                } else {
-                    $data['img_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
-                }
-
-                $size = $_FILES['post_img']['size'];
-                if ($size > 31457280) {
-                    $data['img_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
-                }
-                // Set the upload directory
-                $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/storyImg/';
-                $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/storyImg/feat/';
-                // If no folder create one with permissions
-                if (!file_exists($directory)) {
-                    mkdir($directory, 755, true);
-                }
-                if (!file_exists($directory2)) {
-                    mkdir($directory2, 755, true);
-                }
-                // Rename filename
-                $new_name = round(microtime(true)) . "_" . strtolower($_FILES['post_img']['name']);
-                // Check if file exist and add write permissions
-                $path = $directory . basename($new_name);
-                $path2 = $directory2 . basename($new_name);
-
-                if (file_exists($path)) {
-                    chmod($path, 755);
-                }
-                if (move_uploaded_file($_FILES['post_img']['tmp_name'], strtolower($path))) {
-                    // File uploaded
-                } else {
-                    echo 'Failed to upload your image';
-                    exit();
-                }
-                // Resize the image
-                $image = new ImageResize($path);
-                $image->gamma(false);
-                $image->quality_jpg = 90;
-                $image->interlace = 0;
-                $image
-                    ->crop(1280, 380, true, ImageResize::CROPCENTER)
-                    ->save($path)
-                    ->resizeToWidth(600)
-                    ->save($path2);
-
-            } elseif ($_FILES['post_img']['size'][0] == 0 and $_FILES['post_img']['tmp_name'][0] === '' and $data['noImg'] == 1) {
-
-                $new_name = null;
-
-            } else {
-                // If no new file set the current DATABASE VALUE AS DEFAULT
-                $new_name = $data['sameFile'];
-            }
-
-            if ($this->postModel->updateImg($data, $new_name)) {
-
-                flash('resume_message', 'image updated');
-                redirect('admins/editPost/' . $returnUrl);
-                exit();
-
-            } else {
-                exit('Something went wrong');
-            }
-            // Show errors
-            $this->adminHeader($data);
-            $this->adminNav();
-            flash_error('resume_errors', 'Please correct the error(s)');
-            $this->view('admins/editPost', $data);
-            $this->adminFooter();
-
-        }
-    }
-
-public function uploadGalleryImg($id)
-{
-    $imageById = $this->imageModel->getImageById($id);
-
-    $data =
-        [
-            'glId' => $id,
-            'glImg_err' => '',
-            'glTitle' => $imageById->glTitle,
-
-        ];
-
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // Bring our return url
-        $returnUrl = $_POST['returnUrl'];
-        // CHECK FOR CSRF ATTACK
-        if (validateToken() === false) {
-            //// SHOW ERRORS
-            flash_error('token_error', 'Token mismatch!');
-            redirect('admins/ediImage/' . $returnUrl);
-        }
-        $data =
-            [
-                'glFolder' => trim($_POST['glFolder']),
-                'glImg' => $_FILES['glImg']['name'],
-                'glTitle' => $imageById->glTitle,
-                'glImg_err' => '',
-
-            ];
-
-        if (empty($data['glTitle'])) {
-            $data['glTitle_err'] = 'Please add title';
-        }
-        if (empty($data['glImg'])) {
-            $data['glImg_err'] = 'Please add images';
-        }
-        if (empty($data['glCat'])) {
-            $data['glCat_err'] = 'Please select category';
-        }
-
-        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-        $cat_folder = prettyUrl($data['glTitle']);
-
-        if (empty($data['glTitle_err']) and empty($data['glImg_err']) and empty($data['glCat_err'])) {
-            // Check the file upload
-            //pass the file name to our mime type helper and check the type
-            if ($_FILES['glImg']['error'] == 0) {
-                $type = (get_mime($_FILES['img']['tmp_name']));
-                if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
-                    // File is excepted
-                } else {
-                    $data['glImg_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
-                }
-                $size = $_FILES['glImg']['size'];
-                if ($size > 31457280) {
-                    $data['glImg_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
-                }
-                // Set the upload directory
-                $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/' . $cat_folder;
-                $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
-                $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
-                // If no folder create one with permissions
-                if (!file_exists($directory)) {
-                    mkdir($directory, 755, true);
-                }
-                // Rename filename
-                $new_name = round(microtime(true)) . "_" . strtolower($_FILES['glImg']['name']);
-                // Check if file exist and add write permissions
-                $path = $directory . '/' . basename($new_name);
-                $path1 = $directory1 . '/' . basename($new_name);
-                $path2 = $directory2 . '/' . basename($new_name);
-
-                if (file_exists($path)) {
-                    chmod($path, 755);
-                }
-                if (move_uploaded_file($_FILES['glImg']['tmp_name'], strtolower($path))) {
-                    // File uploaded
-                } else {
-                    echo 'Failed to upload your image';
-                    exit();
-                }
-                // Resize the image
-                $image = new ImageResize($path);
-                $image->gamma(false);
-                $image->quality_jpg = 80;
-                $image->interlace = 0;
-                $image
-                    ->resizeToWidth(1024)
-                    ->save($path)
-                    ->resizeToWidth(600)
-                    ->save($path1)
-                    ->resizeToWidth(200)
-                    ->save($path2);
-
-                /// Grab uploaded image and create a webp version
-                $im = imagecreatefromjpeg($path);
-                $web_p = pathinfo($path);
-                $im1 = imagecreatefromjpeg($path1);
-                $web_p1 = pathinfo($path1);
-                $im2 = imagecreatefromjpeg($path2);
-                $web_p2 = pathinfo($path2);
-                // Convert it to a webp file with 75% quality
-                imagewebp($im, $directory.'/'.$web_p['filename'].'.webp', 75);
-                imagewebp($im1, $directory1.'/'.$web_p1['filename'].'.webp', 75);
-                imagewebp($im2, $directory2.'/'.$web_p2['filename'].'.webp', 75);
-                imagedestroy($im);
-                imagedestroy($im1);
-                imagedestroy($im2);
-
-            } else {
-                // If no new file set the current DATABASE VALUE AS DEFAULT
-                $new_name = $data['sameFile'];
-            }
-
-
-            if ($this->imageModel->updateImage($data, $new_name)) {
-
-                flash('resume_message', 'Image updated');
-                redirect('admins/editImage');
-                exit();
-
-            } else {
-
-                echo "Unable to save data";
-            }
-        } else {
-
-        // SHOW Default view
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/editImage', $data);
-        $this->adminFooter();
-    }
-  }
-
-    // SHOW Default view
-    $this->adminHeader();
-    $this->adminNav();
-    $this->view('admins/editImage', $data);
-    $this->adminFooter();
-
-
-}
-
-    public function editStoryCategory($id)
-    {
-
-        $categories = $this->postModel->getCategories();
-        $catById = $this->postModel->getStoryByCatId($id);
-
-        $data =
-            [
-                'categories' => $categories,
-                'catById' => $catById,
-                'glTitle' => trim($_POST['glTitle']),
-                'glDesc' => trim($_POST['glDesc']),
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $data =
-                [
-                    'categories' => $categories,
-                    'glCatId' =>  $id,
-                    'catById' => $catById,
-                    'glTitle' => trim($_POST['glTitle']),
-                    'glDesc' => trim($_POST['glDesc']),
-                    'glTitle_err' => ''
-
-                ];
-
-            if (empty($data['glTitle'])) {
-                $data['glTitle_err'] = 'Please add title';
-            }
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            if (empty($data['glTitle_err'])) {
-
-                if ($this->postModel->updateStoryCatData($data)) {
-
-                    flash('resume_message', 'Data updated');
-                    redirect('admins/editStoryCategory/' . $id);
-                    exit();
-
-                } else {
-
-                    echo "Unable to save data";
-                }
-            } else {
-
-                // SHOW ERRORS
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/editStoryCategory', $data);
-                $this->adminFooter();
-
-            }
-        }
-
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/editStoryCategory', $data);
-        $this->adminFooter();
-
-    }
-
-
-
-    public function editCategory($id)
-    {
-
-        $categories = $this->imageModel->getGalleryCategories();
-        $catById = $this->imageModel->getCatById($id);
-
-        $data =
-            [
-                'categories' => $categories,
-                'catById' => $catById,
-                'glTitle' => trim($_POST['glTitle']),
-                'glDesc' => trim($_POST['glDesc']),
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $data =
-                [
-                    'categories' => $categories,
-                    'glCatId' =>  $id,
-                    'catById' => $catById,
-                    'glTitle' => trim($_POST['glTitle']),
-                    'glDesc' => trim($_POST['glDesc']),
-                    'glTitle_err' => ''
-
-                ];
-
-            if (empty($data['glTitle'])) {
-                $data['glTitle_err'] = 'Please add title';
-            }
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            if (empty($data['glTitle_err'])) {
-
-                if ($this->imageModel->updateCatData($data)) {
-
-                    flash('resume_message', 'Data updated');
-                    redirect('admins/editCategory/' . $id);
-                    exit();
-
-                } else {
-
-                    echo "Unable to save data";
-                }
-            } else {
-
-                // SHOW ERRORS
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/editCategory', $data);
-                $this->adminFooter();
-
-            }
-        }
-
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/editCategory', $data);
-        $this->adminFooter();
-
-    }
-
-
-    public function editImage($id)
-    {
-
-        $images = $this->imageModel->getAllImages();
-        $imageById = $this->imageModel->getImageById($id);
-        $categories = $this->imageModel->getGalleryCategories();
-        $countImages = $this->imageModel->countImages();
-
-        $data =
-            [
-                'images' => $images,
-                'imageById' =>  $imageById,
-                'categories' => $categories,
-                'countImages' => $countImages,
-                'glTitle' => trim($_POST['glTitle']),
-                'glDesc' => trim($_POST['glDesc']),
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $data =
-                [
-                    'categories' => $categories,
-                    'images' => $images,
-                    'imageById' =>  $imageById,
-                    'glId' =>  $id,
-                    'glTitle' => trim($_POST['glTitle']),
-                    'glDesc' => trim($_POST['glDesc']),
-                    'glCat' => trim($_POST['glCat']),
-                    'glTitle_err' => '',
-                    'glCat_err' => ''
-
-                ];
-
-            if (empty($data['glTitle'])) {
-                $data['glTitle_err'] = 'Please add title';
-            }
-            if (empty($data['glCat'])) {
-                $data['glCat_err'] = 'Please select category';
-            }
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            if (empty($data['glTitle_err']) and empty($data['glCat_err'])) {
-
-                if ($this->imageModel->updateImageData($data)) {
-
-                    flash('resume_message', 'Data updated');
-                    redirect('admins/editImage/' . $id);
-                    exit();
-
-                } else {
-
-                    echo "Unable to save data";
-                }
-            } else {
-
-                // SHOW ERRORS
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/editImage', $data);
-                $this->adminFooter();
-
-            }
-        }
-
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/editImage', $data);
-        $this->adminFooter();
-
-   }
-
-
-
-    public function editSlide($id)
-    {
-        $slides = $this->slideModel->getAllSlides();
-        $slideById = $this->slideModel->getSlideById($id);
-
-        $data =
-            [
-                'slides' => $slides,
-                'slideById' => $slideById
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $data =
-                [
-                    'slides' => $slides,
-                    'slideById' => $slideById,
-                    'slId' =>   $id,
-                    'slTitle' => trim($_POST['slTitle']),
-                    'slDesc' => trim($_POST['slDesc']),
-                    'slData' => trim($_POST['slData']),
-                ];
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-                if ($this->slideModel->updateSlide($data)) {
-
-                    flash('resume_message', 'Slide updated');
-
-                    redirect('admins/editSlide/' . $id);
-                    exit();
-
-                } else {
-                    echo "Unable to save data";
-                }
-            } else {
-
-                // SHOW ERRORS
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/editSlide', $data);
-                $this->adminFooter();
-
-            }
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/editSlide', $data);
-        $this->adminFooter();
-    }
-
-    public function editVideo($id)
-    {
-
-        $videos = $this->videoModel->getAllVideos();
-        $videoById = $this->videoModel->getVideoById($id);
-        $categories = $this->videoModel->getVideoCategories();
-        $countVideos = $this->videoModel->countVideos();
-
-        $data =
-            [
-                'videos' => $videos,
-                'videoById' => $videoById,
-                'categories' => $categories,
-                'countVideos' => $countVideos
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $data =
-                [
-                    'videos' => $videos,
-                    'categories' => $categories,
-                    'videoById' => $videoById,
-                    'vdId' => $id,
-                    'vdTitle' => trim($_POST['vdTitle']),
-                    'vdDesc' => trim($_POST['vdDesc']),
-                    'vdEmbed' => trim($_POST['vdEmbed']),
-                    'vdCat' => trim($_POST['vdCat']),
-                    'vdTitle_err' => '',
-                    'vdEmbed_err' => '',
-                    'vdCat_err' => ''
-
-                ];
-
-            if (empty($data['vdTitle'])) {
-                $data['vdTitle_err'] = 'Please add title';
-            }
-            if (empty($data['vdEmbed'])) {
-                $data['vdEmbed_err'] = 'Please add embed code';
-            }
-            if (empty($data['vdCat'])) {
-                $data['vdCat_err'] = 'Please select category';
-            }
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            if (empty($data['vdTitle_err']) and empty($data['vdEmbed_err']) and empty($data['vdCat_err'])) {
-
-                if ($this->videoModel->updateVideo($data)) {
-
-                    flash('resume_message', 'Video updated');
-                    redirect('admins/editVideo');
-                    exit();
-
-                } else {
-
-                    echo "Unable to save data";
-                }
-            } else {
-
-                // SHOW ERRORS
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/editVideo', $data);
-                $this->adminFooter();
-
-            }
-        }
-
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/editVideo', $data);
-        $this->adminFooter();
-
-    }
-
-
-    public function addStoryCategory()
-    {
-
-        $categories = $this->postModel->getCategories();
-
-        $data =
-            [
-                'categories' => $categories,
-                'glTitle' => trim($_POST['glTitle']),
-                'glDesc' => trim($_POST['glDesc']),
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $data =
-                [
-                    'categories' => $categories,
-                    'glTitle' => trim($_POST['glTitle']),
-                    'glDesc' => trim($_POST['glDesc']),
-                    'glTitle_err' => ''
-
-                ];
-
-            if (empty($data['glTitle'])) {
-                $data['glTitle_err'] = 'Please add title';
-            }
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            if (empty($data['glTitle_err'])) {
-
-                if ($this->postModel->saveStoryCategory($data)) {
-
-                    flash('resume_message', 'Data updated');
-                    redirect('admins/addStoryCategory');
-                    exit();
-
-                } else {
-
-                    echo "Unable to save data";
-                }
-            } else {
-
-                // SHOW ERRORS
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/addStoryCategory', $data);
-                $this->adminFooter();
-
-            }
-        }
-
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/addStoryCategory', $data);
-        $this->adminFooter();
-
-    }
-
-
-
-    public function addCategory()
-    {
-
-        $categories = $this->imageModel->getGalleryCategories();
-
-        $data =
-            [
-                'categories' => $categories,
-                'glTitle' => trim($_POST['glTitle']),
-                'glDesc' => trim($_POST['glDesc']),
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $data =
-                [
-                    'categories' => $categories,
-                    'glTitle' => trim($_POST['glTitle']),
-                    'glDesc' => trim($_POST['glDesc']),
-                    'glTitle_err' => ''
-
-                ];
-
-            if (empty($data['glTitle'])) {
-                $data['glTitle_err'] = 'Please add title';
-            }
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            if (empty($data['glTitle_err'])) {
-
-                if ($this->imageModel->saveCategory($data)) {
-
-                    flash('resume_message', 'Data updated');
-                    redirect('admins/addCategory');
-                    exit();
-
-                } else {
-
-                    echo "Unable to save data";
-                }
-            } else {
-
-                // SHOW ERRORS
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/addCategory', $data);
-                $this->adminFooter();
-
-            }
-        }
-
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/addCategory', $data);
-        $this->adminFooter();
-
-    }
-
-
-    public function addImage()
+    public function addImages()
     {
 
         $images = $this->imageModel->getAllImages();
@@ -1495,123 +1175,170 @@ public function uploadGalleryImg($id)
             ];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Count # of uploaded files in array
+            $total = count($_FILES['glImg']['name']);
+            $name_array = $_FILES['glImg']['name'];
+            $tmp_name_array = $_FILES['glImg']['tmp_name'];
+            $size_array = $_FILES['glImg']['size'];
+            $error_array = $_FILES['glImg']['error'];
 
             $data =
                 [
                     'categories' => $categories,
                     'images' => $images,
-                    'glTitle' => trim($_POST['glTitle']),
-                    'glDesc' => trim($_POST['glDesc']),
                     'glFolder' => trim($_POST['glFolder']),
                     'glImg' => $_FILES['glImg']['name'],
                     'glCat' => trim($_POST['glCat']),
-                    'glTitle_err' => '',
                     'glImg_err' => '',
                     'glCat_err' => ''
 
                 ];
 
-            if (empty($data['glTitle'])) {
-                $data['glTitle_err'] = 'Please add title';
-            }
-            if (empty($data['glImg'])) {
-                $data['glImg_err'] = 'Please add images';
-            }
+
             if (empty($data['glCat'])) {
-                $data['glCat_err'] = 'Please select category';
+                //$data['glCat_err'] = 'Please select category';
+                flash_error('cat_errors', 'Please select category');
+                redirect('admins/addImages');
+                exit();
+            }
+
+            if (empty(array_filter($data['glImg']))) {
+                //$data['glCat_err'] = 'Please select category';
+                flash_error('img_errors', 'No images(s) selected');
+                redirect('admins/addImages');
+                exit();
             }
 
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $cat_folder = prettyUrl($data['glFolder']);
 
-            if (empty($data['glTitle_err']) and empty($data['glImg_err']) and empty($data['glCat_err'])) {
-                // Loop through file items
-                //foreach ($_FILES['glImg']['name'] as $idImg => $val) {
-                foreach ($_FILES['glImg'] as $file) {
-                    // Check the file upload
-                    //pass the file name to our mime type helper and check the type
-                    if ($_FILES['glImg']['error'] == 0) {
-                        $type = (get_mime($_FILES['glImg']['tmp_name']));
-                        if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
-                            // File is excepted
-                        } else {
-                            $data['glImg_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
-                        }
-                        $size = $_FILES['glImg']['size'];
-                        if ($size > 31457280) {
-                            $data['glImg_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
-                        }
-                        // Set the upload directory
-                        $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/' . $cat_folder;
-                        $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
-                        $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
+            //and $error_array == 0
+            if (empty($data['glCat_err']) and empty($data['glImg_err'])) {
+                // Check the file upload
+                //for( $i=0 ; $i < $total ; $i++ ) :
+                //pass the file name to our mime type helper and check the type
+                // Loop through each file
+                foreach ($name_array as $id => $val):
 
-                        // If no folder create one with permissions
-                        if (!file_exists($directory)) {
-                            mkdir($directory, 755, true);
-                        }
-                        // Rename filename
-                        $new_name = round(microtime(true)) . "_" . strtolower($file);
-                        // Check if file exist and add write permissions
-                        $path = $directory . '/' . basename($new_name);
-                        $path1 = $directory1 . '/' . basename($new_name);
-                        $path2 = $directory2 . '/' . basename($new_name);
-
-                        if (file_exists($path)) {
-                            chmod($path, 755);
-                        }
-                        if (move_uploaded_file($_FILES['glImg']['tmp_name'], $path)) {
-                            // File uploaded
-                        } else {
-                            echo 'Failed to upload your image';
+                    if (is_uploaded_file($tmp_name_array[$id])) {
+                        // Notice how to grab MIME type
+                        $mime_type = get_mime($tmp_name_array[$id]);
+                        // If you want to allow certain files
+                        $allowed_file_types = ['image/png', 'image/jpeg', 'image/jpg'];
+                        if (!in_array($mime_type, $allowed_file_types)) {
+                            // File type is NOT allowed
+                            flash_error('img_errors', 'Only jpg/jpeg/png files are allowed');
+                            redirect('admins/addImages');
                             exit();
                         }
 
-                        $image = new ImageResize($path);
-                        $image->gamma(false);
-                        $image->quality_jpg = 75;
-                        $image->interlace = 0;
-                        $image
-                            ->resizeToWidth(1024)
-                            ->save($path)
-                            ->resizeToWidth(600)
-                            ->save($path1)
-                            ->resizeToWidth(200)
-                            ->save($path2);
-
-                        /// Grab uploaded image and create a webp version
-                        $im = imagecreatefromjpeg($path);
-                        $web_p = pathinfo($path);
-                        $im1 = imagecreatefromjpeg($path1);
-                        $web_p1 = pathinfo($path1);
-                        $im2 = imagecreatefromjpeg($path2);
-                        $web_p2 = pathinfo($path2);
-                        // Convert it to a webp file with 75% quality
-                        imagewebp($im, $directory . '/' . $web_p['filename'] . '.webp', 75);
-                        imagewebp($im1, $directory1 . '/' . $web_p1['filename'] . '.webp', 75);
-                        imagewebp($im2, $directory2 . '/' . $web_p2['filename'] . '.webp', 75);
-                        imagedestroy($im);
-                        imagedestroy($im1);
-                        imagedestroy($im2);
+                        if ($size_array[$id] > 31457280) {
+                            flash_error('img_errors', 'Max size is 30MB. Select a smaller file');
+                            redirect('admins/addImages');
+                            exit();
+                        }
                     }
+                    // GETTING THE FILENAME AND USING IT AS TITLE
+                    $filename[$id] = pathinfo($name_array[$id], PATHINFO_FILENAME);
+                    // STRIP AND CLEAN THE THE FILENAME
+                    $title[$id] = preg_replace(array('/-/', '/_/'), array(' ', ' '),$filename[$id]);
+                    //$title = "Hello";
+                    // Set the upload directory
+                    $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/' . $cat_folder;
+                    $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
+                    $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
 
-                }
+                    // If no folder create one with permissions
+                    if (!file_exists($directory)) {
+                        mkdir($directory, 755, true);
+                    }
+                    // Rename filename
+                    $new_name[$id] = round(microtime(true)) . "_" . strtolower($name_array[$id]);
+                    $new_name[$id] = str_replace([" ", ",", "-"], "_", $new_name[$id]);
+                    // Check if file exist and add write permissions
+                    $path = $directory . '/' . basename($new_name[$id]);
+                    $path1 = $directory1 . '/' . basename($new_name[$id]);
+                    $path2 = $directory2 . '/' . basename($new_name[$id]);
 
-                if ($this->imageModel->saveImage($data, $new_name)) {
-                    flash('resume_message', 'Image added');
-                    redirect('admins/addImage');
+                    if (file_exists($path)) {
+                        chmod($path, 755);
+                    }
+                    if (move_uploaded_file($tmp_name_array[$id], $path)) {
+                        // File uploaded
+                    } else {
+                        echo 'Failed to upload your image';
+                    }
+                    
+                    ////////////////////////////////////////////////////////////////////////////////////////////////
+                    // Resize the image
+                    $image = new ImageResize($path);
+                    $image->gamma(false);
+                    $image->quality_jpg = 80;
+                    $image->interlace = 0;
+                    $image
+
+                        ->resizeToWidth(1024)
+                        ->save($path)
+                        ->resizeToWidth(600)
+                        ->save($path1)
+                        ->resizeToWidth(200)
+                        ->save($path2);
+
+                    /// Grab uploaded image and create a webp version///
+                    $imJPG = imagecreatefromjpeg($path);
+                    /// PNG
+                    $imPNG = imagecreatefrompng($path);
+                    imagesavealpha($imPNG, true);
+                    $webP = pathinfo($path);
+                    /// JPG
+                    $imJPG1 = imagecreatefromjpeg($path1);
+                    /// PNG
+                    $imPNG1 = imagecreatefrompng($path1);
+                    $webP1 = pathinfo($path1);
+                    /// JPG
+                    $imJPG2 = imagecreatefromjpeg($path2);
+                    /// PNG
+                    $imPNG2 = imagecreatefrompng($path2);
+                    $webP2 = pathinfo($path2);
+                    // Convert it to a webp file with 75% quality
+                    imagewebp($imJPG, $directory . '/' . $webP['filename'] . '.webp', 80);
+                    imagewebp($imPNG, $directory . '/' . $webP['filename'] . '.webp', 80);
+
+                    imagewebp($imJPG1, $directory . '/' . $webP1['filename'] . '.webp', 80);
+                    imagewebp($imPNG1, $directory . '/' . $webP1['filename'] . '.webp', 80);
+
+                    imagewebp($imJPG2, $directory . '/' . $webP2['filename'] . '.webp', 80);
+                    imagewebp($imPNG2, $directory . '/' . $webP2['filename'] . '.webp', 80);
+
+                    imagedestroy($imJPG);
+                    imagedestroy($imPNG);
+                    imagedestroy($imJPG1);
+                    imagedestroy($imPNG1);
+                    imagedestroy($imJPG2);
+                    imagedestroy($imPNG2);
+
+                    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+                endforeach;
+
+
+                if ($this->imageModel->saveImage($data, $new_name, $title)) {
+
+                    flash('resume_message', 'Image(s) added');
+                    redirect('admins/addImages');
                     exit();
 
                 } else {
-
                     echo "Unable to save data";
+
                 }
+
             } else {
 
                 // SHOW ERRORS
                 $this->adminHeader();
                 $this->adminNav();
-                $this->view('admins/addImage', $data);
+                $this->view('admins/addImages', $data);
                 $this->adminFooter();
             }
         }
@@ -1619,12 +1346,14 @@ public function uploadGalleryImg($id)
         /// SHOW DEFAULT VIEW
         $this->adminHeader();
         $this->adminNav();
-        $this->view('admins/addImage', $data);
+        $this->view('admins/addImages', $data);
         $this->adminFooter();
 
     }
 
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public function addVideo()
     {
@@ -1669,7 +1398,7 @@ public function uploadGalleryImg($id)
                 $data['vdCat_err'] = 'Please select category';
             }
 
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             if (empty($data['vdTitle_err']) and empty($data['vdEmbed_err']) and empty($data['vdCat_err'])) {
 
@@ -1701,7 +1430,6 @@ public function uploadGalleryImg($id)
         $this->adminFooter();
 
     }
-
 
 
     public function addSlide()
@@ -1767,7 +1495,7 @@ public function uploadGalleryImg($id)
                         chmod($path, 755);
                     }
 
-                    if (move_uploaded_file($_FILES['slImg']['tmp_name'], strtolower($path))) {
+                    if (move_uploaded_file($_FILES['slImg']['tmp_name'], $path)) {
                         // File uploaded
                     } else {
                         echo 'Failed to upload your slide';
@@ -1818,69 +1546,8 @@ public function uploadGalleryImg($id)
     }
 
 
-
-
-    public function addTodo()
-    {
-
-        $todo = $this->pageModel->getToDoList();
-        $data =
-            [
-                $todo = $todo,
-                'DoTitle_err' => '',
-                'DoDesc_err' => ''
-            ];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $data =
-                [
-                    $todo = $todo,
-                    'DoTitle_err' => '',
-                    'DoDesc_err' => '',
-                    'DoTitle' => trim($_POST['DoTitle']),
-                    'DoDesc' => trim($_POST['Dodesc'])
-                ];
-
-            if (empty($data['DoTitle'])) {
-                $data['DoTitle_err'] = 'Please add title';
-            }
-            if (empty($data['DoDesc'])) {
-                $data['DoDesc_err'] = 'Please add description';
-            }
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            if (empty($data['DoTitle_err']) and empty($data['DoDesc_err'])) {
-
-                if ($this->adminModel->saveTodo($data)) {
-
-                    flash('success', 'todo saved');
-                    redirect('admins/addTodo');
-
-                } else {
-                    echo "Unable to save data";
-                }
-               } else {
-                /// SHOW ERRORS VIEW
-                $this->adminHeader();
-                $this->adminNav();
-                $this->view('admins/addTodo', $data);
-                $this->adminFooter();
-
-            }
-        }
-
-        /// SHOW DEFAULT VIEW
-        $this->adminHeader();
-        $this->adminNav();
-        $this->view('admins/addTodo', $data);
-        $this->adminFooter();
-
-    }
-
-
 /////////// MAIL FUNCTIONS //////////////////////////////////////////////
+
     public function sendNewsBulk()
     {
 
@@ -1927,13 +1594,14 @@ public function uploadGalleryImg($id)
     }
 
 
-    public function BulkNews($data, $send_to){
+    public function BulkNews($data, $send_to)
+    {
 
         try {
             // Create the Transport
-           $transport = (new Swift_SmtpTransport('websmtp.simply.com', 587))
-         ->setUsername('hello@wtrekker.com')
-         ->setPassword('Fluency76');
+            $transport = (new Swift_SmtpTransport('websmtp.simply.com', 587))
+                ->setUsername('hello@wtrekker.com')
+                ->setPassword('Fluency76');
 
             // Create the Mailer using your created Transport
             $mailer = new Swift_Mailer($transport);
@@ -1975,9 +1643,366 @@ public function uploadGalleryImg($id)
         }
     }
 
+/////////////////////////////////////// UPLOAD FUNCTIONS //////////////////////////////////////////////
+    public function uploadImg()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Bring our return url
+            $returnUrl = $_POST['returnUrl'];
+            // CHECK FOR CSRF ATTACK
+            //if (validateToken() === false) {
+                //// SHOW ERRORS
+                //flash_error('token_error', 'Token mismatch!');
+                //redirect('admins/editPost/' . $returnUrl);
+           // }
+            $data =
+                [
+                    'post_img' => $_FILES['post_img']['name'],
+                    'psId' => $_POST['psId']
+                ];
+
+            $args = array(
+                'post_img' => FILTER_SANITIZE_STRING,
+            );
+
+            $_POST = filter_input_array(INPUT_POST, $args);
+            // Check the file upload
+            //pass the file name to our mime type helper and check the type
+            if ($_FILES['post_img']['error'] == 0) {
+                $type = (get_mime($_FILES['post_img']['tmp_name']));
+                if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
+                    // File is excepted
+                } else {
+                    $data['img_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
+                }
+
+                $size = $_FILES['post_img']['size'];
+                if ($size > 31457280) {
+                    $data['img_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
+                }
+                // Set the upload directory
+                $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/storyImg/';
+                $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/storyImg/feat/';
+                // If no folder create one with permissions
+                if (!file_exists($directory)) {
+                    mkdir($directory, 755, true);
+                }
+                if (!file_exists($directory2)) {
+                    mkdir($directory2, 755, true);
+                }
+                // Rename filename
+                $new_name = round(microtime(true)) . "_" . strtolower($_FILES['post_img']['name']);
+                // Check if file exist and add write permissions
+                $path = $directory . basename($new_name);
+                $path2 = $directory2 . basename($new_name);
+
+                if (file_exists($path)) {
+                    chmod($path, 755);
+                }
+                if (move_uploaded_file($_FILES['post_img']['tmp_name'], $path)) {
+                    // File uploaded
+                } else {
+                    echo 'Failed to upload your image';
+                    exit();
+                }
+                // Resize the image
+                $image = new ImageResize($path);
+                $image->gamma(false);
+                $image->quality_jpg = 90;
+                $image->interlace = 0;
+                $image
+                    ->crop(1280, 380, true, ImageResize::CROPCENTER)
+                    ->save($path)
+                    ->resizeToWidth(600)
+                    ->save($path2);
+
+                /// Grab uploaded image and create a webp version
+                $im = imagecreatefromjpeg($path);
+                $web_p = pathinfo($path);
+                $im2 = imagecreatefromjpeg($path2);
+                $web_p2 = pathinfo($path2);
+                // Convert it to a webp file with 75% quality
+                imagewebp($im, $directory.'/'.$web_p['filename'].'.webp', 80);
+                imagewebp($im2, $directory2.'/'.$web_p2['filename'].'.webp', 80);
+                imagedestroy($im);
+                imagedestroy($im2);
+
+            } elseif ($_FILES['post_img']['size'][0] == 0 and $_FILES['post_img']['tmp_name'][0] === '' and $data['noImg'] == 1) {
+
+                $new_name = null;
+
+            } else {
+                // If no new file set the current DATABASE VALUE AS DEFAULT
+                $new_name = $data['sameFile'];
+            }
+
+            if ($this->postModel->updateImg($data, $new_name)) {
+
+                flash('resume_message', 'image updated');
+                redirect('admins/editPost/' . $returnUrl);
+                exit();
+
+            } else {
+                exit('Something went wrong');
+            }
+            // Show errors
+            $this->adminHeader($data);
+            $this->adminNav();
+            flash_error('resume_errors', 'Please correct the error(s)');
+            $this->view('admins/editPost', $data);
+            $this->adminFooter();
+
+        }
+    }
+
+
+    public function uploadImgSlide()
+    {
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Bring our return url
+            $returnUrl = $_POST['returnUrl'];
+            // CHECK FOR CSRF ATTACK
+            if (validateToken() === false) {
+                //// SHOW ERRORS
+                flash_error('token_error', 'Token mismatch!');
+                redirect('admins/editSlide/' . $returnUrl);
+            }
+            $data =
+                [
+                    'slide_img' => $_FILES['slide_img']['name'],
+                    'slId' => $_POST['slId'],
+                    'img_err' => ''
+                ];
+
+            $args = array(
+                'slide_img' => FILTER_SANITIZE_STRING,
+            );
+
+            $_POST = filter_input_array(INPUT_POST, $args);
+            // Check the file upload
+            //pass the file name to our mime type helper and check the type
+            if ($_FILES['slide_img']['error'] == 0) {
+                $type = (get_mime($_FILES['slide_img']['tmp_name']));
+                if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
+                    // File is excepted
+                } else {
+                    $data['img_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
+                }
+
+                $size = $_FILES['slide_img']['size'];
+                if ($size > 31457280) {
+                    $data['img_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
+                }
+                // Set the upload directory
+                $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/';
+                $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/mobile/';
+                // If no folder create one with permissions
+                if (!file_exists($directory)) {
+                    mkdir($directory, 755, true);
+                }
+                if (!file_exists($directory2)) {
+                    mkdir($directory2, 755, true);
+                }
+                // Rename filename
+                $new_name = round(microtime(true)) . "_" . strtolower($_FILES['slide_img']['name']);
+                // Check if file exist and add write permissions
+                $path = $directory . basename($new_name);
+                $path1 = $directory2 . basename($new_name);
+
+                if (file_exists($path)) {
+                    chmod($path, 755);
+                }
+                if (move_uploaded_file($_FILES['slide_img']['tmp_name'], $path)) {
+                    // File uploaded
+                } else {
+                    echo 'Failed to upload your image';
+                    exit();
+                }
+                // Resize the image
+                $image = new ImageResize($path);
+                $image->gamma(false);
+                $image->quality_jpg = 90;
+                $image->interlace = 0;
+                $image
+                    ->crop(1350, 550)
+                    ->save($path)
+                    ->crop(650, 150)
+                    ->save($path1);
+
+            } elseif ($_FILES['slide_img']['size'][0] == 0 and $_FILES['slide_img']['tmp_name'][0] === '' and $data['noImg'] == 1) {
+
+                $new_name = null;
+
+            } else {
+                // If no new file set the current DATABASE VALUE AS DEFAULT
+                $new_name = $data['sameFile'];
+            }
+
+            if ($this->slideModel->updateImgSlide($data, $new_name)) {
+
+                flash('resume_message', 'Image updated');
+                redirect('admins/editSlide/' . $returnUrl);
+                exit();
+
+            } else {
+                exit('Something went wrong');
+            }
+            // Show errors
+            $this->adminHeader($data);
+            $this->adminNav();
+            flash_error('resume_errors', 'Please correct the error(s)');
+            $this->view('admins/editSlide', $data);
+            $this->adminFooter();
+
+        }
+    }
+
+
+    public function uploadGalleryImg($id)
+    {
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Bring our return url
+            $returnUrl = $_POST['returnUrl'];
+            // CHECK FOR CSRF ATTACK
+            if (validateToken() === false) {
+                //// SHOW ERRORS
+                flash_error('token_error', 'Token mismatch!');
+                redirect('admins/editImage/' . $returnUrl);
+            }
+            $data =
+                [
+                    'glId' => $id,
+                    'glFolder' => $_POST['glFolder'],
+                    'glImg' => $_FILES['glImg']['name'],
+                    'glImg_err' => '',
+
+                ];
+
+            if (empty($data['glImg'])) {
+                $data['glImg_err'] = 'Please add images';
+            }
+
+            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $cat_folder = $data['glFolder'];
+            // Check the file upload
+            //pass the file name to our mime type helper and check the type
+            if ($_FILES['glImg']['error'] == 0) {
+                $type = (get_mime($_FILES['glImg']['tmp_name']));
+                if ($type == 'image/jpeg' or $type == 'image/jpg' or $type == 'image/png') {
+                    // File is excepted
+                } else {
+                    $data['glImg_err'] = 'Sorry! Only jpg/jpeg/png files are allowed';
+                }
+
+                $size = $_FILES['glImg']['size'];
+                if ($size > 31457280) {
+                    $data['glImg_err'] = 'Sorry! Max size is 30MB. Select a smaller file';
+                }
+                // Set the upload directory
+                $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/' . $cat_folder;
+                $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
+                $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
+                // If no folder create one with permissions
+                if (!file_exists($directory)) {
+                    mkdir($directory, 755, true);
+                }
+                // Rename filename
+                $new_name = round(microtime(true)) . "_" . strtolower($_FILES['glImg']['name']);
+                // Check if file exist and add write permissions
+                $path = $directory . '/' . basename($new_name);
+                $path1 = $directory1 . '/' . basename($new_name);
+                $path2 = $directory2 . '/' . basename($new_name);
+
+                if (file_exists($path)) {
+                    chmod($path, 755);
+                }
+                if (file_exists($path1)) {
+                    chmod($path, 755);
+                }
+                if (file_exists($path2)) {
+                    chmod($path, 755);
+                }
+
+                if (move_uploaded_file($_FILES['glImg']['tmp_name'], $path)) {
+                    // File uploaded
+                } else {
+                    echo 'Failed to upload your image';
+                    exit();
+                }
+                // Resize the image
+                $image = new ImageResize($path);
+
+                $image->gamma(false);
+                $image->quality_jpg = 90;
+                $image->interlace = 0;
+                $image
+                    ->resizeToWidth(1024)
+                    ->save($path)
+                    ->resizeToWidth(600)
+                    ->save($path1)
+                    ->resizeToWidth(200)
+                    ->save($path2);
+
+                /// Grab uploaded image and create a webp version
+                $im = imagecreatefromjpeg($path);
+                $web_p = pathinfo($path);
+                $im1 = imagecreatefromjpeg($path1);
+                $web_p1 = pathinfo($path1);
+                $im2 = imagecreatefromjpeg($path2);
+                $web_p2 = pathinfo($path2);
+                // Convert it to a webp file with 75% quality
+                imagewebp($im, $directory.'/'.$web_p['filename'].'.webp', 75);
+                imagewebp($im1, $directory1.'/'.$web_p1['filename'].'.webp', 75);
+                imagewebp($im2, $directory2.'/'.$web_p2['filename'].'.webp', 75);
+                imagedestroy($im);
+                imagedestroy($im1);
+                imagedestroy($im2);
+            }
+
+            if ($this->imageModel->updateImage($data, $new_name)) {
+
+                flash('resume_message', 'Image updated');
+                redirect('admins/editImage/' . $returnUrl);
+                exit();
+
+            } else {
+
+                echo "Unable to save data";
+            }
+            // SHOW Default view
+            $this->adminHeader();
+            $this->adminNav();
+            $this->view('admins/editImage', $data);
+            $this->adminFooter();
+
+        }
+    }
 
 
 //////////////// DELETE FUNCTIONS //////////////////////////////////////////////
+
+
+
+
+    public function deleteStoryCategory()
+    {
+        // DELETING ALL THE ITEMS WITHIN THE ARRAY. NOTE: BULK DELETE SHOULD BE AVOIDED USING A FOREACH LOOP.
+        //if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ( isset( $_POST[ 'bulk_delete' ] ) ) {
+
+            $del = $_POST['files'];
+            $id = implode(',', $del);
+
+            if ($this->postModel->delStoryCategory($id)) {
+                flash('resume_message', 'Data deleted');
+                redirect('admins/addStoryCategory');
+            } else { exit('Something went wrong'); }
+
+        } else { redirect('admins/addStoryCategory');
+        }
+    }
 
 
     public function deleteEmail($id)
@@ -2016,7 +2041,7 @@ public function uploadGalleryImg($id)
     {
         $returnUrl = $_POST['returnUrl'];
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if ($this->adminModel->delVideo($id)) {
+            if ($this->videoModel->delVideo($id)) {
                 flash('resume_message', 'Video deleted');
                 redirect($returnUrl);
             } else {
@@ -2031,84 +2056,73 @@ public function uploadGalleryImg($id)
     {
         // DELETING ALL THE ITEMS WITHIN THE ARRAY. NOTE: BULK DELETE SHOULD BE AVOIDED USING A FOREACH LOOP.
         //if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if ( isset( $_POST[ 'bulk_delete' ] ) ) {
+        if (isset($_POST['bulk_delete'])) {
 
             $del = $_POST['files'];
             $id = implode(',', $del);
             // GET ALL THE IMAGES FROM THE CHECKBOX IDS
             $get_img = $this->imageModel->getSelectedImg($id);
-            // SET PATH TO DIRECTORIES
-            $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg';
-            $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
-            $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
-
-
             if ($this->imageModel->delImage($id)) {
                 // DELETING ALL THE ITEMS WITHIN THE ARRAY.
                 foreach ($get_img as $key => $un) :
-                  $web_p = pathinfo($un->gl_img);
-                  unlink( $directory . '/' . trim($un->gl_folder) . '/' . $un->gl_img );
-                  unlink( $directory1 . '/' . $un->gl_img);
-                  unlink( $directory2 . '/' . $un->gl_img);
-                  /// Delete the webp version
-                  unlink( $directory . '/' . trim($un->gl_folder) . '/' . $web_p['filename'].'.webp');
-                  unlink( $directory1 . '/' . trim($un) . '/' . $web_p['filename'].'.webp');
-                  unlink( $directory2 . '/' . trim($un) . '/' . $web_p['filename'].'.webp');
-                 endforeach;
+
+                    $folder = cleanerUrl($un->gl_cat_title);
+                    // SET PATH TO DIRECTORIES
+                    $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/' . $folder;
+                    $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/mobile';
+                    $directory2 = $_SERVER['DOCUMENT_ROOT'] . '/public/photoImg/thumbs';
+
+                    // Get the Webp version to
+                    $web_p = pathinfo($un->gl_img);
+                    if (file_exists($directory)) :
+
+                        unlink($directory . '/' . $un->gl_img);
+                        unlink($directory1 . '/' . $un->gl_img);
+                        unlink($directory2 . '/' . $un->gl_img);
+                        /// Delete the webp version
+                        unlink( $directory . '/' . $web_p['filename'].'.webp');
+                        unlink( $directory1 . '/' . $web_p['filename'].'.webp');
+                        unlink( $directory2 . '/' . $web_p['filename'].'.webp');
+                    else:
+
+                        echo "File error, " . $directory . '/' . $un->gl_img . " Does not exist";
+
+                    endif;
+                endforeach;
 
                 flash('resume_message', 'Image(s) deleted');
-                redirect('admins/addImage');
+                redirect('admins/addImages');
 
-             } else { exit('Something went wrong'); }
+            } else {
+                exit('Something went wrong');
+            }
 
-            } else { redirect('admins/addImage');
+        } else {
+            redirect('admins/addImages');
         }
     }
-
+    
 
     public function deleteSlide($id)
     {
-        $returnUrl = $_POST['returnUrl'];
         $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/' . $_POST['file'];
-        $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/mobile/' . '/' . $_POST['file'];
+        $directory1 = $_SERVER['DOCUMENT_ROOT'] . '/public/sliderImg/mobile/' . $_POST['file'];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if ($this->adminModel->delSlide($id)) {
-                if(!unlink($directory)) : echo "File error, File not removed"; else:
+            if ($this->slideModel->delSlide($id)) {
+                if (!file_exists($directory)) : echo "File error, File not removed";
+                else:
                     unlink($directory);
                     unlink($directory1);
                 endif;
                 flash('resume_message', 'Slide deleted');
-                redirect($returnUrl);
+                redirect('admins/addSlide');
             } else {
                 exit('Something went wrong');
             }
         } else {
-            redirect($returnUrl);
+            redirect('admins/addSlide');
         }
     }
-
-
-
-
-    public function deleteStoryCategory()
-    {
-        // DELETING ALL THE ITEMS WITHIN THE ARRAY. NOTE: BULK DELETE SHOULD BE AVOIDED USING A FOREACH LOOP.
-        //if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if ( isset( $_POST[ 'bulk_delete' ] ) ) {
-
-            $del = $_POST['files'];
-            $id = implode(',', $del);
-
-            if ($this->postModel->delStoryCategory($id)) {
-                flash('resume_message', 'Data deleted');
-                redirect('admins/addStoryCategory');
-            } else { exit('Something went wrong'); }
-
-        } else { redirect('admins/addStoryCategory');
-        }
-    }
-
 
 }
-

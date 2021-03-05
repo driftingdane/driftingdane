@@ -38,11 +38,12 @@
 
     <!-- Database styles for pagination>-->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/cr-1.5.2/datatables.min.css" />
+    <link href=" https://cdn.datatables.net/rowreorder/1.2.7/css/rowReorder.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.datatables.net/responsive/2.2.7/css/responsive.dataTables.min.css" rel="stylesheet" type="text/css">
+
     <!-- regular styles -->
     <link href="<?php echo URLROOT; ?>/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="<?php echo URLROOT; ?>/css/admin/custom.css" rel="stylesheet" type="text/css">
-
-    <link href="<?php echo URLROOT; ?>/css/forms.css" rel="stylesheet" type="text/css">
     <link href="<?php echo URLROOT; ?>/css/admin/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css">
     <link href="<?php echo URLROOT; ?>/css/admin/style.sea.css" rel="stylesheet" type="text/css">
     <!-- custom imports -->

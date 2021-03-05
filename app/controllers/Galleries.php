@@ -48,7 +48,7 @@ class Galleries extends Base
                         'siteDesc' => $images->gl_desc,
                         'siteImg' => $this->site->site_logo,
                         'creator' => $this->site->site_contact_name,
-                        'ogImg' => '/catImg/share-img/' . strtolower($cat_title). ".jpg",
+                        'ogImg' => '/catImg/share-img/' . strtolower(str_replace(" ", "-", $cat_title)). ".jpg",
                     ];
 
         $this->standardHeader($data);

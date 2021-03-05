@@ -287,7 +287,14 @@ footer {
     margin-top: 8px;
 }
 
+th > img {max-width: 130px;!important;}
 /***********************************************************************/
+
+@media screen and (max-width: 992px){
+    .hide_date {
+        display: none!important;
+    }
+}
 
 @media
 only screen and (max-width: 760px),
@@ -335,4 +342,3 @@ only screen and (max-width: 760px),
     }
 
 }
-

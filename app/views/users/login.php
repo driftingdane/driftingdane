@@ -13,7 +13,7 @@
                             <h2><span class="text-info">Login</span> to your account</h2>
                             <p>Please fill in all fields with <sub>*</sub></p>
                             <form class="icon-form" action="<?php echo URLROOT; ?>/users/login" method="post">
-                             <input type="hidden" name="token" value="<?php echo createToken(); ?>">
+                             <input type="hidden" name="token" value="<?php //echo createToken(); ?>">
                               <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="email"><i class="far fa-envelope-open"></i> Email: <sub>*</sub></label>

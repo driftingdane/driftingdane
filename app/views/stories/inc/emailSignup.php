@@ -4,11 +4,10 @@
 <p class="p-1 text-center text-black-50 lead">Get story updates! Subscribe.</p>
 <div class="row justify-content-center">
     <form action="<?php echo URLROOT; ?>/p/subscribe" method="post">
-        <input type="hidden" name="returnUrl" value="<?php echo $_GET['url']; ?>">
         <input type="text" name="subEmail" placeholder="mylovelymail@" class="form-control mb-2 mr-sm-2 form-control-lg <?php echo (!empty($data['subEmail_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['email']; ?>" required>
         <span class="invalid-feedback m-3"><?php echo $data['subEmail_err']; ?></span>
         <p></p>
-        <button id="subscribe" type="submit" class="btn btn-primary mb-2 btn-block"><i class="fas fa-sign-in-alt"></i> Subscribe</button>
+        <button id="subscribe" type="submit" class="btn btn-primary mb-2 btn-block rounded"><i class="fas fa-sign-in-alt"></i> Subscribe</button>
     </form>
 </div>
     </div>

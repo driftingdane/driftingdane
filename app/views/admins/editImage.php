@@ -1,9 +1,14 @@
+<?php 
+
+error_reporting(E_ALL);
+ ini_set("display_errors", 1);
+?>
 <div id="page-content"><!-- Needed for sticky footer-->
     <main role="main">
         <section>
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-10 mx-auto">
+                    <div class="col-sm-9 mx-auto">
 
                         <?php require APPROOT . '/views/admins/inc/editGalleryimage.php'; ?>
 
@@ -13,11 +18,12 @@
                             <?php echo flash_error('resume_errors'); ?>
                             <p>Please fill in all fields with <sub>*</sub></p>
                             <form action="<?php echo URLROOT . '/admins/editImage/' . $data['imageById']->gl_id; ?>" class="icon-form process" enctype="multipart/form-data" method="post" novalidate>
-                                <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ; ?>">
+                                <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
+                                <input type="hidden" name="returnUrl" value="<?php echo basename($_SERVER['REQUEST_URI']) ?>">
                                 <div class="col-md-12 mb-3">
                                     <label for="glCat"><i class="far fa-flag formIcons"></i> Category: <sub>*</sub></label>
                                     <select id="glCat" name="glCat" class="custom-select custom-select-lg mb-3 <?php echo (!empty($data['glCat_err'])) ? 'is-invalid' : ''; ?>" required>
-                                        <option value="" selected><?php echo $data['imageById']->gl_cat_title; ?></option>
+                                        <option value="<?php echo $data['imageById']->gl_cat_id; ?>" selected><?php echo $data['imageById']->gl_cat_title; ?></option>
                                         <?php
                                         if(is_array($data['categories'])) :
                                             foreach ($data['categories'] as $cat) : ?>
@@ -50,15 +56,14 @@
                                     <div class="form-group mt-4 mb-3">
                                         <input type="submit" value="Update" class="btn btn-primary btn-block">
                                     </div>
+
                                 </div>
                             </form>
                         </div>
                     </div>
-                </div>
                 <?php require APPROOT . '/views/admins/inc/listImages.php'; ?>
             </div>
         </section>
-
     </main>
 </div><!-- Page id ends sticky footer-->
 

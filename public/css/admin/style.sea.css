@@ -281,9 +281,9 @@ nav.navbar a.menu-btn:hover {
     position: static;
   }
   nav.navbar .dropdown-menu {
-    width: 90vw;
-    right: 2.5vw;
-    left: 2.5vw;
+    width: 83vw;
+    /*right: 2.5vw;
+    left: 2.5vw;*/
     margin: 0 auto;
   }
   nav.navbar .notification {

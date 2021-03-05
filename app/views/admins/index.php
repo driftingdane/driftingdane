@@ -24,7 +24,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Count item widget-->
                     <div class="col-xl-4 col-md-4 col-sm-4">
                         <div class="wrapper count-title d-flex align-items-center justify-content-center">

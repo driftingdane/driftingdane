@@ -3,7 +3,7 @@
         <section>
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-8 mx-auto">
+                    <div class="col-sm-9 mx-auto">
                         <div class="card card-body bg-light mb-5">
                             <?php echo flash('resume_message'); ?>
                             <h2><span class="text-info">Edit</span> newsletter</h2>
@@ -37,9 +37,7 @@
                 </div>
                 <?php require APPROOT . '/views/admins/inc/listNews.php'; ?>
             </div>
-</div>
 </section>
-
 
 </main>
 </div><!-- Page id ends sticky footer-->

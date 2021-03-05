@@ -1,4 +1,4 @@
-<div class="col-sm-8 profileCard mb-5 table-responsive">
+<div class="col-md-9 col-sm-12 profileCard mb-5 mt-5 table-responsive">
     <div class="profileCard-heading text-center mn-3">Email list
       <?php
         foreach ($data['countEmails'] as $count) : ?>

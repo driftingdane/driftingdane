@@ -1,9 +1,9 @@
 <div id="page-content"><!-- Needed for sticky footer-->
     <main role="main">
         <section>
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-10 mx-auto">
+                    <div class="col-sm-9 mx-auto">
                         <div class="card card-body bg-light mb-5">
                             <?php echo flash('resume_message'); ?>
                             <h2>Add slide</h2>
@@ -47,6 +47,7 @@
                                                aria-describedby="fileHelp">
                                         <span class="invalid-feedback"><?php echo $data['slImg_err']; ?></span>
                                     </div>
+                                </div>
 
                                 <div class="col-md-12 mb-3">
                                     <div class="form-group mt-4 mb-3">
@@ -54,11 +55,12 @@
                                     </div>
                                 </div>
                             </form>
-                        </div>
                     </div>
                 </div>
+            </div>
                 <?php require APPROOT . '/views/admins/inc/listSlides.php'; ?>
             </div>
+
         </section>
 
     </main>

@@ -1,16 +1,16 @@
 <div id="page-content"><!-- Needed for sticky footer-->
     <main role="main">
 <section>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-10 mx-auto">
+            <div class="col-sm-9 mx-auto">
                 <div class="card card-body bg-light mb-5">
                     <?php echo flash('resume_message'); ?>
                     <h2>Add post</h2>
                     <?php echo flash_error('resume_errors'); ?>
                     <p>Please fill in all fields with <sub>*</sub></p>
                     <form action="<?php echo URLROOT; ?>/admins/addPost" class="icon-form process" enctype="multipart/form-data" method="post" novalidate>
-                        <input type="hidden" name="token" value="<?php echo createToken(); ?>">
+                        <input type="hidden" name="token" value="<?php //echo createToken(); ?>">
                         <div class="col-md-12 mb-3">
                             <label for="catId"><i class="far fa-flag formIcons"></i> Category: <sub>*</sub></label>
                             <select id="catId" name="catId" class="custom-select custom-select-lg mb-3 <?php echo (!empty($data['cat_err'])) ? 'is-invalid' : ''; ?>" required>
@@ -53,23 +53,6 @@
                                         class="form-control form-control-lg profile_form_bio addTinymce <?php echo (!empty($data['psPost_err'])) ? 'is-invalid' : ''; ?>"><?php echo $data['psPost']; ?></textarea>
                               <span class="invalid-feedback"><?php echo $data['psPost_err']; ?></span>
                           </div>
-                            <?php
-                            if (empty($data['postById']->ps_img)) {$setImg = "nologo.png";
-                            } else {$setImg = $data['postById']->ps_img;}
-                            ?>
-                                <div class="col-md-12 mb-3">
-                                    <?php if (!empty($data['postById']->ps_img)) : ?>
-                                        <label for="sameFile"><i class="fab fa-wordpress formIcons mt-3"></i> <span class="inline-span">Feat. image: </span></label>
-                                        <div class="userAvatar mt-3">
-                                            <div class="custom-control custom-checkbox">
-                                                <input id="removeLogo" class="custom-control-input" type="checkbox" value="1" name="noImg">
-                                                <label for="removeLogo" class="custom-control-label" for="customCheck">Remove image</label>
-                                            </div>
-                                            <img class="img-fluid mx-auto d-block"
-                                                 src="<?php echo URLROOT; ?>/storyImg/<?php echo $setImg; ?>">
-                                        </div>
-                                    <?php else: echo "Add featured image"; endif; ?>
-                                </div>
 
                                 <div class="col-md-12 mb-3">
                                     <div class="custom-file form-control-lg mb-2" id="customFile" lang="en">
@@ -82,6 +65,9 @@
                                         <span class="invalid-feedback"><?php echo $data['img_err']; ?></span>
                                     </div>
 
+                                    <input type="checkbox" class="custom-checkbox custom-checkbox-lg" name="published" value="YES">
+                                    <span class="text-info font-weight-bold">Is published</span>
+
                                     <div class="form-group mt-4 mb-3">
                                         <input type="submit" value="Add" class="btn btn-primary btn-block">
                                     </div>
@@ -90,6 +76,7 @@
                 </div>
             </div>
         </div>
+
         <?php require APPROOT . '/views/admins/inc/listPosts.php'; ?>
     </div>
 </section>

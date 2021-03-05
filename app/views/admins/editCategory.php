@@ -1,9 +1,9 @@
 <div id="page-content"><!-- Needed for sticky footer-->
     <main role="main">
         <section>
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-10 mx-auto">
+                    <div class="col-sm-9 mx-auto">
 
                         <?php //require APPROOT . '/views/admins/inc/editGallerycat.php'; ?>
 
@@ -42,6 +42,7 @@
                     </div>
                 </div>
             </div>
+                <?php require APPROOT . '/views/admins/inc/listCategories.php'; ?>
 </div>
 </section>
 

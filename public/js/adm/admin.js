@@ -228,3 +228,41 @@ $(function(){
         }
     });
 });
+
+// New function
+function check_cat(){
+
+    if(document.getElementById('glCat').value == "") {return false;}
+    if(document.getElementById("glImg").files.length == 0){return false;}
+        // prevents executing progress bar unless form is validated
+        loadSubmit();
+        return true;
+}
+
+// Function for the upload progress bar
+function loadSubmit() {
+    let ProgressImage = document.getElementById('progress');
+    document.getElementById("progress").style.visibility = "visible";
+    setTimeout(function(){ProgressImage.src = ProgressImage.src},100);
+
+        let timerId, percent;
+        // reset progress bar
+        percent = 0;
+        $('#progress').css('width', '0px').addClass('progress-bar-animated active');
+        $('#progress').html('<span class="spinner-border spinner-border-sm ml-auto"></span>');
+
+        timerId = setInterval(function() {
+
+            // increment progress bar
+            percent += 5;
+            $('#progress').css('width', percent + '%');
+
+            if (percent >= 100) {
+                clearInterval(timerId);
+                $('#progress').removeClass('progress-bar-animated active').html('Complete');
+            }
+        }, 300);
+
+
+    return true;
+}

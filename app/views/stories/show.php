@@ -1,29 +1,28 @@
 <div id="page-content"><!-- Needed for sticky footer-->
     <main role="main">
+        <?php
+            $postEntry = get_webp($data['post']->ps_entry);
+            $postFeat = get_webp($data['post']->ps_img);
+        ?>
         <section class="bg-banner clip-ellipse">
             <div class="mx-auto d-block text-center">
-                <img src="<?php echo URLROOT . '/storyImg/' . $data['post']->ps_img; ?>"
-                     alt="<?php echo $data['post']->ps_img; ?>">
+                <img src="<?php echo URLROOT . '/storyImg/' . $postFeat; ?>" alt="<?php echo $postFeat; ?>">
             </div>
         </section>
-        <?php
-      if( strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false || strpos( $_SERVER['HTTP_USER_AGENT'], ' Chrome/' ) !== false ) {
-          echo "webp is supported!";
-          $postEntry = str_replace(".jpg", ".webp", $data['post']->ps_entry);
-        }
-        ?>
-        <section>
-            <!-- Start post-content Area -->
-            <div class="offset-lg-9 col-lg-3">
-                    <div class="yt-subscribe">
-                        <img width="150" class="img-fluid rounded-circle userAvatar-img userAvatar-white" src="<?php echo URLROOT; ?>/all_img/img/me.jpg" alt="Drifting Dane">
-                    </div><!-- .yt-subscribe -->
 
-            </div><!-- .col -->
+        <section>
+
 
             <div class="consult-postDetail">
+
                 <div class="container">
                     <div class="consult-postDetail__main">
+                        <!-- Start post-content Area -->
+                        <div class="offset-lg-9 col-lg-3">
+                            <div class="yt-subscribe">
+                                <img class="img-fluid rounded-circle userAvatar-img userAvatar-white" src="<?php echo URLROOT; ?>/all_img/img/me.jpg" alt="Drifting Dane">
+                            </div><!-- .yt-subscribe -->
+                        </div><!-- .col -->
                         <div class="corner-back"><a class="btn-sm btn-sm-outline color-orange" href="<?php echo $_SERVER['HTTP_REFERER']; ?>">Back</a></div>
 
                         <!-- social-01 -->
@@ -58,7 +57,7 @@
                                                     <?php if (isLoggedIn() and adminAut): ?>
                                                 <li>
                                                         <i class="fas fa-user-shield"></i>
-                                                        <a title="Edit post" class="" href="<?php echo URLROOT . '/admins/editPost/' . $data['post']->ps_slug; ?>">Edit</a>
+                                                        <a title="Edit post" class="" target="_blank" href="<?php echo URLROOT . '/admins/editPost/' . $data['post']->ps_slug; ?>">Edit</a>
                                                 </li>
                                                     <?php endif; ?>
 
@@ -69,17 +68,11 @@
 
                                     <div class="row">
                                         <div id="fitvids" class="col-xl-11 offset-0 offset-sm-0 offset-md-0 offset-lg-0 offset-xl-1 fitvids">
-                                            <p class="text"><?php //echo $data['post']->ps_entry; ?></p>
                                             <p class="text"><?php echo $postEntry; ?></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <?php $next = $data['post']->ps_id+1;
-                            $prev = $data['post']->ps_id-1;
-
-                            ?>
-                            <a title="Prev" class="" href="<?php echo URLROOT . '/admins/editPost/' . $data['post']->ps_slug; ?>">Edit</a>
                         </div>
 
                     </div>

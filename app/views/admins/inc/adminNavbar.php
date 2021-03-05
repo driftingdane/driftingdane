@@ -1,5 +1,6 @@
 <!-- Side Navbar -->
 <section>
+
 <nav class="side-navbar">
     <div class="side-navbar-wrapper">
         <!-- Sidebar Header    -->
@@ -48,6 +49,7 @@
                                         <i class="far fa-user"></i> Profile <span class="caret"></span>
                                     </button>
                                     <?php
+              
                                     if($_SESSION['has_access'] === 'is_admin') : ?>
                                     <a href="<?php echo URLROOT; ?>/admins" class="btn btn-sm btn-outline-info mt-2 mb-2"><i class="fas fa-user-shield"></i> Admins</a>
                                     <?php else: ?>

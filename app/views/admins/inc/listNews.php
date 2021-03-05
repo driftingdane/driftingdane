@@ -1,4 +1,4 @@
-<div class="col-sm-8 profileCard mb-5 table-responsive">
+<div class="col-md-9 col-sm-12 profileCard mb-5 table-responsive">
     <div class="profileCard-heading text-center">News list</div>
     <table class="table table-sm">
         <thead class="thead-dark mb-2">

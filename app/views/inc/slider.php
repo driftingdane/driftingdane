@@ -13,6 +13,8 @@ foreach ($data['slider'] as $slide) :
         <p style="width:260px; white-space:pre-line;font-family: Lato, HelveticaNeue, Helvetica, Arial; font-size:15px; color:#878787; top:90%; left:20px; text-align: left;" class="ls-l" data-ls="offsetyin:-100%; durationin:900; delayin:100; clipin:100% 0 0 0; durationout:400; parallaxlevel:0;"><?php echo $slide->sl_desc; ?></p>
         <?php endif; ?>
         <?php echo $slide->sl_data; ?>
+        <div class="youtube_layer trigger" src="https://www.youtube.com/embed/G7MYOIi1kh8?rel=0" frameborder="0"  data-target="#videoModal" data-toggle="modal"></div>
+
     </div>
  <?php endforeach; ?>
 </div>
