@@ -46,7 +46,13 @@ table th, table td{
     display: table-cell!important;
     vertical-align: middle!important;
 }
+@media screen and (max-width: 992px) {
+    .hide_date {
+        display: none !important;
+    }
+}
 
+th > img {max-width: 130px;!important;}
 /* Select every 3rd list item starting with first */
 .smaller-font > th {
     font-size: 85%;
@@ -287,14 +293,7 @@ footer {
     margin-top: 8px;
 }
 
-th > img {max-width: 130px;!important;}
 /***********************************************************************/
-
-@media screen and (max-width: 992px){
-    .hide_date {
-        display: none!important;
-    }
-}
 
 @media
 only screen and (max-width: 760px),
@@ -342,3 +341,4 @@ only screen and (max-width: 760px),
     }
 
 }
+

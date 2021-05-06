@@ -1,8 +1,8 @@
 <div id="page-content"><!-- Needed for sticky footer-->
     <main role="main">
         <?php
-            $postEntry = get_webp($data['post']->ps_entry);
-            $postFeat = get_webp($data['post']->ps_img);
+            $postEntry = check_for_webp_version($data['post']->ps_entry);
+            $postFeat = check_for_webp_version($data['post']->ps_img);
         ?>
         <section class="bg-banner clip-ellipse">
             <div class="mx-auto d-block text-center">
@@ -11,8 +11,6 @@
         </section>
 
         <section>
-
-
             <div class="consult-postDetail">
 
                 <div class="container">

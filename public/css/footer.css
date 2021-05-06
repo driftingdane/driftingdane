@@ -9,6 +9,8 @@
     padding-top: 100px;
 }
 
+.copy { color: #EEE;}
+
 .footer-area .footer-nav li {
     margin-top: 18px;
 }
@@ -277,4 +279,7 @@
     -webkit-text-stroke-color: #d4d7d8;
 }
 
+.fb-like {
+    text-align: left!important;
+}
 

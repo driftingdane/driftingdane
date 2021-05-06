@@ -11,8 +11,8 @@
         <!-- Category list -->
         <div class="col-lg-3 offset-lg-0 col-sm-6 grid-item <?php echo $cat->gl_cat_class; ?>">
             <div class="category-block"><a class="" href="<?php echo $linkUrlLower; ?>">
-                    <img src="<?php echo URLROOT . '/catImg/' . get_webp($cat->gl_cat_img); ?>">
-                    <h3 class="lead"><?php echo $cat->gl_cat_title; ?> <span class="badge badge-info">
+                    <img src="<?php echo URLROOT . '/catImg/' . check_for_webp_version($cat->gl_cat_img); ?>">
+                    <h3 class="lead"><?php echo $cat->gl_cat_title; ?> <span class="badge badge-info pb-1">
                             <small>(<?php echo $cat->img_count; ?>)</small></span></h3>
                 <div class="category-list">
                     <p class="text-black">

@@ -45,5 +45,13 @@ function menuLinks($data) {
     return $menu;
 
 }
+function remove_white($r_white) {
+
+    //remove all white spaces from a string
+    $r_white = preg_replace('/\s/','',$r_white);
+    return $r_white;
+
+}
+
 
 

@@ -12,7 +12,7 @@
                             <h2>Edit post</h2>
                             <?php echo flash_error('resume_errors'); ?>
                             <p>Please fill in all fields with <sub>*</sub></p>
-                            <form action="<?php echo URLROOT . '/admins/editPost/' . $data['postById']->ps_slug; ?>" class="icon-form process" enctype="multipart/form-data" method="post" novalidate>
+                            <form action="<?php echo URLROOT . '/admins/editPost/' . $data['postById']->ps_slug; ?>" class="icon-form process" enctype="multipart/form-data" method="post">
                                 <input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
                                 <input type="hidden" name="psId" value="<?php echo $data['postById']->ps_id; ?>">
                                 <input type="hidden" name="returnUrl" value="<?php echo basename($_SERVER['REQUEST_URI']) ?>">

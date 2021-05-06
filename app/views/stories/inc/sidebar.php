@@ -8,12 +8,13 @@
             <div class="widget-text__content">
                     <?php foreach ($data['categories'] as $category) :
 
-                        // URLROOT . '/categories/' . $category->ps_cat_slug . '/' . cleanerUrl($category->ps_cat_name);
+                        $link = URLROOT . '/stories/byCategory/' . $category->ps_cat_slug . '/' . cleanerUrl($category->ps_cat_name);
                         ?>
+                         <a class="btn-link" href="<?php echo $link; ?>">
                         <p style="padding-left:15px;">
                             <i class="fab fa-slack-hash"></i> <?php echo $category->ps_cat_name; ?><span class="badge"> (<?php echo $category->post_count; ?>)</span>
                         <br/><small class="btn-link text-black-50" style="text-decoration: none;"><?php echo $category->ps_cat_desc; ?></small>
-                        </p>
+                        </p></a>
                     <?php endforeach; ?>
             </div>
         </section><!-- End / widget-text__widget -->

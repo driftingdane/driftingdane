@@ -1294,21 +1294,23 @@ class Admins extends Base
                     $imJPG1 = imagecreatefromjpeg($path1);
                     /// PNG
                     $imPNG1 = imagecreatefrompng($path1);
+                    imagesavealpha($imPNG1, true);
                     $webP1 = pathinfo($path1);
                     /// JPG
                     $imJPG2 = imagecreatefromjpeg($path2);
                     /// PNG
                     $imPNG2 = imagecreatefrompng($path2);
+                    imagesavealpha($imPNG2, true);
                     $webP2 = pathinfo($path2);
                     // Convert it to a webp file with 75% quality
                     imagewebp($imJPG, $directory . '/' . $webP['filename'] . '.webp', 80);
                     imagewebp($imPNG, $directory . '/' . $webP['filename'] . '.webp', 80);
 
-                    imagewebp($imJPG1, $directory . '/' . $webP1['filename'] . '.webp', 80);
-                    imagewebp($imPNG1, $directory . '/' . $webP1['filename'] . '.webp', 80);
+                    imagewebp($imJPG1, $directory1 . '/' . $webP1['filename'] . '.webp', 80);
+                    imagewebp($imPNG1, $directory1 . '/' . $webP1['filename'] . '.webp', 80);
 
-                    imagewebp($imJPG2, $directory . '/' . $webP2['filename'] . '.webp', 80);
-                    imagewebp($imPNG2, $directory . '/' . $webP2['filename'] . '.webp', 80);
+                    imagewebp($imJPG2, $directory2 . '/' . $webP2['filename'] . '.webp', 80);
+                    imagewebp($imPNG2, $directory2 . '/' . $webP2['filename'] . '.webp', 80);
 
                     imagedestroy($imJPG);
                     imagedestroy($imPNG);
@@ -1931,13 +1933,14 @@ class Admins extends Base
                     echo 'Failed to upload your image';
                     exit();
                 }
+                ////////////////////////////////////////////////////////////////////////////////////////////////
                 // Resize the image
                 $image = new ImageResize($path);
-
                 $image->gamma(false);
-                $image->quality_jpg = 90;
+                $image->quality_jpg = 80;
                 $image->interlace = 0;
                 $image
+
                     ->resizeToWidth(1024)
                     ->save($path)
                     ->resizeToWidth(600)
@@ -1945,20 +1948,42 @@ class Admins extends Base
                     ->resizeToWidth(200)
                     ->save($path2);
 
-                /// Grab uploaded image and create a webp version
-                $im = imagecreatefromjpeg($path);
-                $web_p = pathinfo($path);
-                $im1 = imagecreatefromjpeg($path1);
-                $web_p1 = pathinfo($path1);
-                $im2 = imagecreatefromjpeg($path2);
-                $web_p2 = pathinfo($path2);
+                /// Grab uploaded image and create a webp version///
+                $imJPG = imagecreatefromjpeg($path);
+                /// PNG
+                $imPNG = imagecreatefrompng($path);
+                imagesavealpha($imPNG, true);
+                $webP = pathinfo($path);
+                /// JPG
+                $imJPG1 = imagecreatefromjpeg($path1);
+                /// PNG
+                $imPNG1 = imagecreatefrompng($path1);
+                imagesavealpha($imPNG1, true);
+                $webP1 = pathinfo($path1);
+                /// JPG
+                $imJPG2 = imagecreatefromjpeg($path2);
+                /// PNG
+                $imPNG2 = imagecreatefrompng($path2);
+                imagesavealpha($imPNG2, true);
+                $webP2 = pathinfo($path2);
                 // Convert it to a webp file with 75% quality
-                imagewebp($im, $directory.'/'.$web_p['filename'].'.webp', 75);
-                imagewebp($im1, $directory1.'/'.$web_p1['filename'].'.webp', 75);
-                imagewebp($im2, $directory2.'/'.$web_p2['filename'].'.webp', 75);
-                imagedestroy($im);
-                imagedestroy($im1);
-                imagedestroy($im2);
+                imagewebp($imJPG, $directory . '/' . $webP['filename'] . '.webp', 80);
+                imagewebp($imPNG, $directory . '/' . $webP['filename'] . '.webp', 80);
+
+                imagewebp($imJPG1, $directory1 . '/' . $webP1['filename'] . '.webp', 80);
+                imagewebp($imPNG1, $directory1 . '/' . $webP1['filename'] . '.webp', 80);
+
+                imagewebp($imJPG2, $directory2 . '/' . $webP2['filename'] . '.webp', 80);
+                imagewebp($imPNG2, $directory2 . '/' . $webP2['filename'] . '.webp', 80);
+
+                imagedestroy($imJPG);
+                imagedestroy($imPNG);
+                imagedestroy($imJPG1);
+                imagedestroy($imPNG1);
+                imagedestroy($imJPG2);
+                imagedestroy($imPNG2);
+
+                ///////////////////////////////////////////////////////////////////////////////////////////////
             }
 
             if ($this->imageModel->updateImage($data, $new_name)) {

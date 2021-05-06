@@ -1338,3 +1338,15 @@ a.text-dark:focus, a.text-dark:hover {
     margin-left: 15px;
   }
 }
+
+.w-10 {
+  width: 10% !important;
+}
+.w-15 {
+  width: 15% !important;
+}
+.w-20 {
+  width: 20% !important;
+}
+
+

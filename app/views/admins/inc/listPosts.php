@@ -17,7 +17,6 @@
         </thead>
         <thead class="thead-light">
         <tbody>
-
         <?php
         if(is_array($data['posts'])) :
             foreach($data['posts'] as $ps) :
@@ -25,7 +24,7 @@
                 ?>
                 <tr class="smaller-font">
                     <th class="text-center text-md-left w-20" scope="col"><?php echo $ps->ps_title; ?></th>
-                    <th class="text-center text-md-left w-25" scope="col"><img class="img-fluid lazyload" data-src="<?php echo URLROOT . '/storyImg/feat/' . $ps->ps_img; ?>" alt="<?php echo $ps->ps_img;; ?>"></th>
+                    <th class="text-center text-md-left w-25" scope="col"><img class="img-fluid lazyload" data-src="<?php echo URLROOT . '/storyImg/feat/' . check_for_webp_version($ps->ps_img); ?>" alt="<?php echo $ps->ps_img; ?>"></th>
                     <th class="text-center text-md-left w-25" scope="col"><?php echo $ps->ps_sub_title; ?></th>
                     <th class="text-center text-md-left" scope="col"><?php echo $ps->us_first; ?></th>
                     <th class="text-center text-md-left" scope="col"><?php echo $ps->ps_cat_name; ?></th>

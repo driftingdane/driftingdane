@@ -56,15 +56,15 @@ $(document).ready(function () {
         mobile: {
             menubar: true
         },
-        height: "400",
+        height: "600",
         plugins: [
-            'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            'advlist autolink lists link image searchreplace charmap print preview hr anchor pagebreak',
             'searchreplace wordcount visualblocks visualchars code fullscreen autosave',
             'insertdatetime media nonbreaking save table directionality template',
             'emoticons template paste textpattern imagetools image'
         ],
         toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
-        toolbar2: 'link image, | restoredraft, | print preview media | forecolor backcolor emoticons template insert',
+        toolbar2: 'link image, | restoredraft | searchreplace | print preview media | forecolor backcolor emoticons template insert',
 
         //templates: "public/WebVersionEmail.php",
         templates:
@@ -229,14 +229,15 @@ $(function(){
     });
 });
 
+
 // New function
 function check_cat(){
 
     if(document.getElementById('glCat').value == "") {return false;}
     if(document.getElementById("glImg").files.length == 0){return false;}
-        // prevents executing progress bar unless form is validated
-        loadSubmit();
-        return true;
+    // prevents executing progress bar unless form is validated
+    loadSubmit();
+    return true;
 }
 
 // Function for the upload progress bar
@@ -245,23 +246,23 @@ function loadSubmit() {
     document.getElementById("progress").style.visibility = "visible";
     setTimeout(function(){ProgressImage.src = ProgressImage.src},100);
 
-        let timerId, percent;
-        // reset progress bar
-        percent = 0;
-        $('#progress').css('width', '0px').addClass('progress-bar-animated active');
-        $('#progress').html('<span class="spinner-border spinner-border-sm ml-auto"></span>');
+    let timerId, percent;
+    // reset progress bar
+    percent = 0;
+    $('#progress').css('width', '0px').addClass('progress-bar-animated active');
+    $('#progress').html('<span class="spinner-border spinner-border-sm ml-auto"></span>');
 
-        timerId = setInterval(function() {
+    timerId = setInterval(function() {
 
-            // increment progress bar
-            percent += 5;
-            $('#progress').css('width', percent + '%');
+        // increment progress bar
+        percent += 5;
+        $('#progress').css('width', percent + '%');
 
-            if (percent >= 100) {
-                clearInterval(timerId);
-                $('#progress').removeClass('progress-bar-animated active').html('Complete');
-            }
-        }, 300);
+        if (percent >= 100) {
+            clearInterval(timerId);
+            $('#progress').removeClass('progress-bar-animated active').html('Complete');
+        }
+    }, 300);
 
 
     return true;

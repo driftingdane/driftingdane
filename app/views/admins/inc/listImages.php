@@ -28,16 +28,15 @@
         <button type="submit" name="bulk_delete" title="Delete files" class="btn btn-sm btn-danger delete_with_icon btn-block-xs"><i class="far fa-trash-alt"></i></button>
         <p class="inline-span">Select all:</br>
             <input type="checkbox" id="gallery_all"></p>
-
         <?php
         if(is_array($data['images'])) :
             foreach($data['images'] as $gl) : ?>
                 <tr class="smaller-font">
                     <th><input type="checkbox" name="files[]" id="delete_image" class="checkbox" value="<?php echo $gl->gl_id; ?>"><p class="hide_date small"><?php echo $gl->gl_id; ?></p></th>
                     <th class="text-center text-md-left w-20" scope="col"><?php echo $gl->gl_title; ?></th>
-                    <th class="text-center text-md-left w-25" scope="col"><img class="img-fluid lazyload" data-src="<?php echo URLROOT . '/photoImg/thumbs/' . $gl->gl_img; ?>" alt="<?php echo $gl->gl_img; ?>">
+                    <th class="text-center text-md-left w-25" scope="col"><img class="img-fluid lazyload" data-src="<?php echo URLROOT . '/photoImg/thumbs/' . check_for_webp_version($gl->gl_img); ?>" alt="<?php echo $gl->gl_img; ?>">
                         <!-- Trigger -->
-                        <a href="#" class="border-0 photoLink" data-clipboard-action="copy" data-toggle="tooltip" title="Link copied" data-clipboard-text="<?php echo URLROOT . '/photoImg/mobile/' . $gl->gl_img; ?>">
+                        <a href="#" class="border-0 photoLink" data-clipboard-action="copy" data-toggle="tooltip" title="Link copied" data-clipboard-text="<?php echo URLROOT . '/photoImg/mobile/' . check_for_webp_version($gl->gl_img); ?>">
                             Copy
                         </a>
                     </th>

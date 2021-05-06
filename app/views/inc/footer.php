@@ -111,7 +111,7 @@
 
 
 <script src="<?php echo URLROOT; ?>/js/jquery-3.4.1.min.js" type="text/javascript"></script>
-<script src="<?php echo URLROOT; ?>/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="<?php echo URLROOT; ?>/js/bootstrap.bundle.min.js" type="text/javascript"></script>
 <script src="<?php echo URLROOT; ?>/js/menu.min.js"type="text/javascript" ></script>
 <script src="<?php echo URLROOT; ?>/js/fitvids.js" type="text/javascript"></script>
 <script src="<?php echo URLROOT; ?>/js/image-reloaded.js" type="text/javascript"></script>

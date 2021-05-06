@@ -2,7 +2,6 @@
     <main role="main">
      <div class="container">
          <div class="row mt-5">
-
              <div class="col-md-12 mt-5">
                  <h1 class="text-center text-uppercase mt-5"><i class="fas fa-wave-square color-orange-text fa-rotate-180"></i>
                      Sto<span class="color-orange-text">ries</span> <i class="fas fa-wave-square fa-rotate-90"></i></h1>
@@ -10,13 +9,12 @@
             <!-- Section -->
             <section class="md-section">
                 <div class="container">
-
                     <!-- layout-blog sidebar-left -->
                     <div class="layout-blog sidebar-left">
                         <div class="layout-blog__content">
                             <?php
                             foreach ($data['posts'] as $post) :
-                                    $postImg = get_webp($post->ps_img);
+                                    $postImg = check_for_webp_version($post->ps_img);
                                 if ($post->is_published === "YES") :
                                 ?>
                                 <!--  -->

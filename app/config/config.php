@@ -13,6 +13,8 @@ define('URLROOT', 'http://driftingdane');
 define('URLROOTAWESOME', '//driftingdane');
 // Site Name
 define('SITENAME', 'Drifting Dane');
+
+define('SITENAMEWITHCOM', 'DriftingDane.com');
 // App Version
 define('APPVERSION', 'OneManCms version. 2.0');
 // Creator

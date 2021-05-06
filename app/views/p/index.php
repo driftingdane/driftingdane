@@ -20,7 +20,7 @@
         <div class="col-sm-12 col-md-5 lead text-justify mb-5 mt-5">
                 <p class="pl-3 pr-3">
                     <?php echo utf8_encode($data['siteDesc']); ?>
-                   <br><br><strong class="lead font-weight-bold">Author:</strong> Janaina Noerregaard Santos.
+                   <br><br><strong class="lead font-weight-bold">Author:</strong> Janaina Fernanda Santos, São Paulo | Brazil
                 </p>
          </div>
 

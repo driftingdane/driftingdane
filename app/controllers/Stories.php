@@ -36,6 +36,37 @@ class Stories extends Base
 
 
     //////////// SHOW BY ID (RESUME)
+    public function byCategory($id = '')
+    {
+        // Collecting all our info from all our tables for the show view
+        //$post = $this->postModel->getPostById($id);
+        $postByCat = $this->postModel->getPostsByCategory($id);
+        // No ID redirect
+        if (empty($id)) {
+            redirect('stories/byCategory');
+        }
+        $data =
+            [
+                'postByCat' => $postByCat,
+                'title' => $postByCat->ps_cat_name . " | " . $postByCat->ps_cat_desc . " | Stories | " . SITENAME,
+                'siteName' => $this->site->site_name,
+                'siteImg' => $this->site->site_logo,
+                'creator' => $this->site->site_contact_name,
+                'ogImg' =>  '/catImg/' . $postByCat->ps_cat_img,
+
+            ];
+
+
+        $this->standardHeader($data);
+        $this->standardNav();
+        $this->view('stories/byCategory', $data);
+        $this->standardFooter();
+    }
+
+
+
+
+    //////////// SHOW BY ID (RESUME)
     public function show($id = '')
     {
         // Collecting all our info from all our tables for the show view
@@ -61,6 +92,8 @@ class Stories extends Base
         $this->view('stories/show', $data);
         $this->standardFooter();
     }
+
+
 
 
 ///// DELETE FUNCTIONS ////////////////////////////////////////////////////////
