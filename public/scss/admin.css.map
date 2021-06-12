@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sourceRoot": "",
+  "sources": [
+    "admin.scss"
+  ],
+  "names": [],
+  "mappings": "AAAA;AACA;EACE;EACA;EACA;;;AAEF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AAEF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AAEF;EACE;;;AAEF;EACE;;;AAEF;EACE;EACA;;;AAEF;EACE;EACA;;;AAEF;EACE;;;AAEF;EACE;;;AAGF",
+  "file": "admin.css"
+}

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sourceRoot": "",
+  "sources": [
+    "scss_admin.scss"
+  ],
+  "names": [],
+  "mappings": "AACA,WACE,WACA,kBACA,yBAEA,4BACE,kBACA,WACA,YACA,MACA,OACA,QACA,SACA,UACA,eAGF,uBACE,WACA,iBACA,kBACA,mBACA,oBACA,gCACA,uCACA,kBACA,sCAEA,gCACE,aAIJ,6BACE,gCAGF,8CACE,uCACA,0CAGF,8CACE,8BACA,kCAEA,uDACE,qBAEF,uDACE",
+  "file": "scss_admin.min.css"
+}
