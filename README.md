@@ -1,7 +1,7 @@
 - 👋 Hi, I’m @driftingdane
 - 👀 I’m interested in Django and Python
 - 🌱 I’m currently learning Django and Python
-- 💞️ I’m looking to collaborate on within these scopes
+- 💞️ I’m looking to collaborate within these scopes
 - 📫 How to reach me Profengbrazil@gmail.com
 
 <!---
