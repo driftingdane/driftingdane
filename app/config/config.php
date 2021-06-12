@@ -1,14 +1,14 @@
 <?php
 // DB Params
-define('DB_HOST', 'localhost');
-define('DB_USER', 'prof.morten');
-define('DB_PASS', 'Wtrekker76');
-define('DB_NAME', 'travelblog');
+define('DB_HOST', '');
+define('DB_USER', '');
+define('DB_PASS', '');
+define('DB_NAME', '');
 define('CHARTSET', 'utf8');
 // App Root
 define('APPROOT', dirname(dirname(__FILE__)));
 // URL Root
-define('URLROOT', 'http://driftingdane');
+define('URLROOT', 'https://driftingdane');
 // URL Root SSL FontAwesome
 define('URLROOTAWESOME', '//driftingdane');
 // Site Name
@@ -20,7 +20,7 @@ define('APPVERSION', 'OneManCms version. 2.0');
 // Creator
 define('CREATEDBY', 'CraftingDev.com');
 // Creator link
-define('CREATEDBYURL', 'http://CraftingDev.com/');
+define('CREATEDBYURL', 'https://CraftingDev.com/');
 // Copyright
 define('COPYRIGHT', '&copy; ');
 

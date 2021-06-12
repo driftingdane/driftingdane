@@ -886,14 +886,14 @@ class Admins extends Base
             ];
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        
-                // CHECK FOR CSRF ATTACK
-               if (validateToken() === false) {
-                //// SHOW ERRORS
-                flash_error('token_error', 'Token mismatch!');
-                redirect('admins/addPost');
-               }
-            
+
+            // CHECK FOR CSRF ATTACK
+//               if (validateToken() === false) {
+//                //// SHOW ERRORS
+//                flash_error('token_error', 'Token mismatch!');
+//                redirect('admins/addPost');
+//               }
+
             $data =
                 [
                     'categories' => $categories,
@@ -1601,9 +1601,9 @@ class Admins extends Base
 
         try {
             // Create the Transport
-            $transport = (new Swift_SmtpTransport('websmtp.simply.com', 587))
-                ->setUsername('hello@wtrekker.com')
-                ->setPassword('Fluency76');
+            $transport = (new Swift_SmtpTransport('', 587))
+                ->setUsername('')
+                ->setPassword('');
 
             // Create the Mailer using your created Transport
             $mailer = new Swift_Mailer($transport);
